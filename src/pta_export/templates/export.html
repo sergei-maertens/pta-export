@@ -10,5 +10,9 @@
         {{ form.as_p }}
         <button type="submit">Exporteer</button>
     </form>
+
+    <div class="content__links">
+        <a href="{% url 'export' %}">API endpoint</a>
+    </div>
 </article>
 {% endblock %}

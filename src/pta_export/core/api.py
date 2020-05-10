@@ -3,9 +3,9 @@ from django.urls import path
 from rest_framework import permissions, serializers
 from rest_framework.generics import CreateAPIView
 
-from ..constants import Leerjaren
-from ..models import Kalender
-from ..views import get_export_response
+from .constants import Leerjaren
+from .models import Kalender
+from .views import get_export_response
 
 
 class ExportSerializer(serializers.Serializer):
