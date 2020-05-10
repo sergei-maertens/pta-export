@@ -1,0 +1,14 @@
+{% extends "master.html" %}
+{% load static %}
+
+{% block body-class %}demo{% endblock %}
+
+{% block content %}
+<article class="content">
+    <form action="." method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Exporteer</button>
+    </form>
+</article>
+{% endblock %}

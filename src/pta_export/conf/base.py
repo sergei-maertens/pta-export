@@ -245,6 +245,8 @@ AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
 ]
 
+LOGIN_URL = reverse_lazy("admin:login")
+
 #
 # Custom settings
 #

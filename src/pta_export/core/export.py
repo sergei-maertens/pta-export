@@ -43,7 +43,7 @@ COLUMN_WIDTHS = {
 HEADER_BG_COLOR = "D9D9D9"
 
 
-def export(year: int, leerjaar: int):
+def export(year: int, leerjaar: int) -> Document:
     # complex sorting - year starts around week 33
     toetsen = (
         Toets.objects.filter(jaar=year, klas=leerjaar)
@@ -58,11 +58,7 @@ def export(year: int, leerjaar: int):
     vakken = Vak.objects.prefetch_related(
         Prefetch("toets_set", queryset=toetsen, to_attr="toetsen")
     )
-
-    doc = create_document(year, leerjaar, vakken)
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as tmp:
-        doc.save(tmp.name)
-        print(f"Output in: {tmp.name}")
+    return create_document(year, leerjaar, vakken)
 
 
 def get_toets_table(
