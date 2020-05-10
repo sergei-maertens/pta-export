@@ -3,39 +3,30 @@ version: '3'
 
 services:
   db:
-    # NOTE: No persistance storage configured.
-    # See: https://hub.docker.com/_/postgres/
-    image: postgres
-    # NOTE: this works for bitnami, not sure if this works for regular
-    # postgres image
+    image: mariadb:10.5-bionic
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-sosecret}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-pta_export}
+      MYSQL_USER: ${MYSQL_USER:-pta_export}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-pta_export}
     volumes:
+      - db:/var/lib/mysql
       - ./docker-init-db.sql:/docker-entrypoint-initdb.d/init_db.sql
 
   web:
     build: .
+    image: regexit/pta-export:latest
     environment:
-      - DJANGO_SETTINGS_MODULE=pta_export.conf.docker
-      - SECRET_KEY=${SECRET_KEY:-dvoyzzh@eqlv0=gxal%kb3106dmd4=nx)2#2+czs-=-#p9q_(_}
+      DJANGO_SETTINGS_MODULE: pta_export.conf.docker
+      SECRET_KEY: ${SECRET_KEY:-dvoyzzh@eqlv0=gxal%kb3106dmd4=nx)2#2+czs-=-#p9q_(_}
+      DB_NAME: ${MYSQL_DATABASE:-pta_export}
+      DB_USER: ${MYSQL_USER:-pta_export}
+      DB_PASSWORD: ${MYSQL_PASSWORD:-pta_export}
     ports:
-      - 8000:8000
+      - ${WEB_PORT:-8000}:8000
     depends_on:
       - db
 
-# See: src/pta_export/conf/docker.py
-# Optional containers below:
-#  elasticsearch:
-#    # NOTE: No persistance storage configured.
-#    # See: https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html
-#    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
-#    container_name: elasticsearch
-#    environment:
-#      - discovery.type=single-node
-#      - cluster.routing.allocation.disk.threshold_enabled=false
-#    ports:
-#      - 9200:9200
-#  redis:
-#    # NOTE: No persistance storage configured.
-#    # See: https://hub.docker.com/_/redis/
-#    image: redis
-#    ports:
-#        - 6379:6379
+
+volumes:
+  db:
