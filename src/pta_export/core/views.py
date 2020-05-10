@@ -9,6 +9,24 @@ from .export import export
 from .forms import ExportForm
 
 
+def get_export_response(jaar: int, leerjaar: int):
+    _leerjaar = Leerjaren.labels[leerjaar]
+
+    document = export(jaar, leerjaar)
+
+    outfile = BytesIO()
+    document.save(outfile)
+    outfile.seek(0)
+
+    response = FileResponse(
+        outfile,
+        as_attachment=True,
+        filename=f"{jaar}-{_leerjaar}.docx",
+        content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    )
+    return response
+
+
 class ExportView(LoginRequiredMixin, FormView):
     form_class = ExportForm
     template_name = "export.html"
@@ -16,17 +34,4 @@ class ExportView(LoginRequiredMixin, FormView):
     def form_valid(self, form: ExportForm):
         jaar = form.cleaned_data["jaar"]
         leerjaar = form.cleaned_data["klas"]
-        _leerjaar = Leerjaren.labels[leerjaar]
-
-        document = export(jaar, leerjaar)
-        outfile = BytesIO()
-        document.save(outfile)
-        outfile.seek(0)
-
-        response = FileResponse(
-            outfile,
-            as_attachment=True,
-            filename=f"{jaar}-{_leerjaar}.docx",
-            content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        )
-        return response
+        return get_export_response(jaar, leerjaar)

@@ -38,6 +38,7 @@ urlpatterns = [
     ),
     # Simply show the master template.
     path("", ExportView.as_view()),
+    path("api/", include("pta_export.core.api")),
 ]
 
 # NOTE: The staticfiles_urlpatterns also discovers static files (ie. no need to run collectstatic). Both the static

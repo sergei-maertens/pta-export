@@ -20,12 +20,14 @@ django-ipware==2.1.0      # via -r requirements/base.txt, django-axes
 django-jenkins==0.110.0   # via -r requirements/test-tools.in
 django-redis==4.11.0      # via -r requirements/base.txt
 django-webtest==1.9.7     # via -r requirements/test-tools.in
-django==3.0.6             # via -r requirements/base.txt, django-appconf, django-axes, django-choices, django-jenkins, django-redis
+django==3.0.6             # via -r requirements/base.txt, django-appconf, django-axes, django-choices, django-jenkins, django-redis, djangorestframework
+djangorestframework==3.11.0  # via -r requirements/base.txt
 factory-boy==2.12.0       # via -r requirements/test-tools.in
 faker==4.0.3              # via factory-boy
 freezegun==0.3.15         # via -r requirements/test-tools.in
 idna==2.9                 # via requests
 lxml==4.5.0               # via -r requirements/base.txt, pyquery, python-docx
+markdown==3.2.2           # via -r requirements/base.txt
 mysqlclient==1.4.6        # via -r requirements/base.txt
 pyquery==1.4.1            # via -r requirements/test-tools.in
 python-dateutil==2.8.1    # via faker, freezegun

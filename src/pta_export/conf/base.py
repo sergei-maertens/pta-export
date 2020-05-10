@@ -55,6 +55,8 @@ INSTALLED_APPS = [
     "hijack",
     "compat",  # Part of hijack
     "hijack_admin",
+    "rest_framework",
+    "rest_framework.authtoken",
     # Project applications.
     "pta_export.accounts",
     "pta_export.core.apps.CoreConfig",
@@ -258,6 +260,16 @@ SHOW_ALERT = True
 # Library settings
 #
 
+#
+# DRF
+#
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+}
 
 # Django-Admin-Index
 ADMIN_INDEX_SHOW_REMAINING_APPS = True
