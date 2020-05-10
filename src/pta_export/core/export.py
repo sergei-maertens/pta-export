@@ -1,8 +1,13 @@
 import html
 import logging
-from typing import List, Optional, Tuple
+import tempfile
+from typing import Iterable, List, Optional, Tuple
 
 from django.db.models import Case, F, Prefetch, Value, When
+from django.utils.text import capfirst
+
+from docx import Document
+from docx.enum.section import WD_ORIENT
 
 from .constants import Leerjaren
 from .models import Kalender, Toets, Vak
@@ -20,8 +25,6 @@ LEERJAAR_WEGING = {
 
 
 def export(year: int, leerjaar: int):
-    toetsweken = Kalender.objects.get(jaar=year).toetsweken
-
     # complex sorting - year starts around week 33
     toetsen = (
         Toets.objects.filter(jaar=year, klas=leerjaar)
@@ -37,10 +40,56 @@ def export(year: int, leerjaar: int):
         Prefetch("toets_set", queryset=toetsen, to_attr="toetsen")
     )
 
-    weging = LEERJAAR_WEGING.get(leerjaar)
-    tables = [get_toets_table(vak, toetsweken, weging) for vak in vakken]
+    doc = create_document(year, leerjaar, vakken)
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as tmp:
+        doc.save(tmp.name)
+        print(f"Output in: {tmp.name}")
 
-    print(tables)
+
+def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Document:
+    toetsweken = Kalender.objects.get(jaar=year).toetsweken
+    weging = LEERJAAR_WEGING.get(leerjaar)
+    _leerjaar = Leerjaren.labels[leerjaar]
+    school_year = f"{year}-{year + 1}"
+
+    document = Document()
+
+    # set to landscape
+    section = document.sections[-1]
+    new_width, new_height = section.page_height, section.page_width
+    section.orientation = WD_ORIENT.LANDSCAPE
+    section.page_width = new_width
+    section.page_height = new_height
+
+    # add the document title
+    document.add_heading(f"PTAs {_leerjaar} {year}", level=0)
+
+    for vak in vakken:
+        header = f"PTA\t{capfirst(vak.naam)}\t{_leerjaar}\t{school_year}"
+        document.add_heading("", level=1).add_run(header).bold = True
+
+        [header, *rows] = get_toets_table(vak, toetsweken, weging)
+
+        table = document.add_table(rows=len(rows) + 1, cols=len(header))
+
+        header_cells = table.rows[0].cells
+        for index, title in enumerate(header):
+            header_cells[index].text = title
+            _make_bold(header_cells[index])
+
+        for index, row in enumerate(rows, 1):
+            row_cells = table.rows[index].cells
+            for _index, content in enumerate(row):
+                row_cells[_index].text = str(content)
+            _make_bold(row_cells[0])
+
+        document.add_page_break()
+
+    return document
+
+
+def _make_bold(cell):
+    cell.paragraphs[0].runs[0].font.bold = True
 
 
 def get_toets_table(
@@ -72,14 +121,14 @@ def get_toets_table(
             html.unescape(toets.omschrijving),
             toets.domein,
             periode,
-            toets.week,
+            toets.week or "",
             toets.soortwerk.naam,
             toets.tijd,
-            toets.weging_r4,
+            toets.weging_r4 or "",
         ]
 
         if weging is not None:
-            row.append(getattr(toets, weging[1]))
+            row.append(getattr(toets, weging[1]) or "")
 
         assert len(row) == len(header), "Header and row columns mismatch"
         rows.append(row)
