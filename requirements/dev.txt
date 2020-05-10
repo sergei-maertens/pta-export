@@ -39,7 +39,7 @@ idna==2.9                 # via -r requirements/ci.txt, requests
 imagesize==1.2.0          # via sphinx
 isort==4.3.21             # via -r requirements/dev.in
 jinja2==2.11.2            # via sphinx
-lxml==4.5.0               # via -r requirements/ci.txt, pyquery
+lxml==4.5.0               # via -r requirements/ci.txt, pyquery, python-docx
 markupsafe==1.1.1         # via jinja2
 mccabe==0.6.1             # via flake8
 mysqlclient==1.4.6        # via -r requirements/ci.txt
@@ -53,6 +53,7 @@ pyparsing==2.4.7          # via packaging
 pyquery==1.4.1            # via -r requirements/ci.txt
 python-dateutil==2.8.1    # via -r requirements/ci.txt, faker, freezegun
 python-decouple==3.3      # via -r requirements/ci.txt
+python-docx==0.8.10       # via -r requirements/ci.txt
 python-dotenv==0.13.0     # via -r requirements/ci.txt
 pytz==2020.1              # via -r requirements/ci.txt, babel, django
 redis==3.5.1              # via -r requirements/ci.txt, django-redis

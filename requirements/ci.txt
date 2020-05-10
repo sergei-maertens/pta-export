@@ -25,11 +25,12 @@ factory-boy==2.12.0       # via -r requirements/test-tools.in
 faker==4.0.3              # via factory-boy
 freezegun==0.3.15         # via -r requirements/test-tools.in
 idna==2.9                 # via requests
-lxml==4.5.0               # via pyquery
+lxml==4.5.0               # via -r requirements/base.txt, pyquery, python-docx
 mysqlclient==1.4.6        # via -r requirements/base.txt
 pyquery==1.4.1            # via -r requirements/test-tools.in
 python-dateutil==2.8.1    # via faker, freezegun
 python-decouple==3.3      # via -r requirements/base.txt
+python-docx==0.8.10       # via -r requirements/base.txt
 python-dotenv==0.13.0     # via -r requirements/base.txt
 pytz==2020.1              # via -r requirements/base.txt, django
 redis==3.5.1              # via -r requirements/base.txt, django-redis

@@ -1,6 +1,7 @@
 # Core python libraries
 mysqlclient  # database driver
 pytz  # handle timezones
+python-docx
 python-dotenv  # environment variables for secrets
 python-decouple  # processing of envvar configs
 
