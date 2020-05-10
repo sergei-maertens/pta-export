@@ -1,0 +1,10 @@
+SECRET_KEY="dvoyzzh@eqlv0=gxal%kb3106dmd4=nx)2#2+czs-=-#p9q_(_"
+DB_NAME="pta_export"
+DB_USER="pta_export"
+#
+# For peer authentication via unix domain socket
+# these should be kept empty.
+#
+DB_PASSWORD=""
+DB_HOST=""
+DB_PORT=""

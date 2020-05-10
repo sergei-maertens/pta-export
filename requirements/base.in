@@ -1,0 +1,23 @@
+# Core python libraries
+mysqlclient  # database driver
+pytz  # handle timezones
+python-dotenv  # environment variables for secrets
+python-decouple  # processing of envvar configs
+
+# Framework libraries
+django
+django-axes
+django-choices
+django-hijack
+django-hijack-admin
+django-redis
+
+# API libraries
+# djangorestframework
+# django-extra-fields
+# django-filter
+# drf-yasg  # api documentation
+
+# WSGI servers & monitoring - production oriented
+uwsgi
+sentry-sdk  # error monitoring
