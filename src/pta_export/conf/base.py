@@ -3,7 +3,7 @@ import os
 # Django-hijack (and Django-hijack-admin)
 from django.urls import reverse_lazy
 
-from sentry_sdk.integrations import django, redis, DidNotEnable
+from sentry_sdk.integrations import DidNotEnable, django, redis
 
 try:
     from sentry_sdk.integrations import celery
@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     "hijack_admin",
     # Project applications.
     "pta_export.accounts",
+    "pta_export.core.apps.CoreConfig",
     "pta_export.utils",
 ]
 
@@ -218,11 +219,7 @@ LOGGING = {
         },
     },
     "loggers": {
-        "pta_export": {
-            "handlers": ["project"],
-            "level": "INFO",
-            "propagate": True,
-        },
+        "pta_export": {"handlers": ["project"], "level": "INFO", "propagate": True,},
         "django.request": {
             "handlers": ["django"],
             "level": "ERROR",

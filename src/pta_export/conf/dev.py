@@ -1,7 +1,9 @@
 import os
 import warnings
 
-os.environ.setdefault("SECRET_KEY", "dvoyzzh@eqlv0=gxal%kb3106dmd4=nx)2#2+czs-=-#p9q_(_")
+os.environ.setdefault(
+    "SECRET_KEY", "dvoyzzh@eqlv0=gxal%kb3106dmd4=nx)2#2+czs-=-#p9q_(_"
+)
 
 # uses postgresql by default, see base.py
 os.environ.setdefault("DB_NAME", "pta_export"),
@@ -30,11 +32,7 @@ ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
 LOGGING["loggers"].update(
     {
-        "pta_export": {
-            "handlers": ["console"],
-            "level": "DEBUG",
-            "propagate": True,
-        },
+        "pta_export": {"handlers": ["console"], "level": "DEBUG", "propagate": True,},
         "django": {"handlers": ["console"], "level": "DEBUG", "propagate": True,},
         "django.db.backends": {
             "handlers": ["django"],
