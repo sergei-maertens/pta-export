@@ -15,7 +15,17 @@ class OverstapAdmin(admin.ModelAdmin):
 
 @admin.register(Toets)
 class ToetsAdmin(admin.ModelAdmin):
-    list_display = ("jaar", "klas", "cohort", "vak", "type", "code", "omschrijving", "domein", "week")
+    list_display = (
+        "jaar",
+        "klas",
+        "cohort",
+        "vak",
+        "type",
+        "code",
+        "omschrijving",
+        "domein",
+        "week",
+    )
     list_select_related = ("vak",)
     list_filter = ("jaar", "vak", "klas")
 

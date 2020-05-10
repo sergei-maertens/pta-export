@@ -1,6 +1,19 @@
+from typing import List
+
 from django.db import models
 
-from .constants import Leerjaren
+from .constants import Leerjaren, Types
+
+TOETSWEEK_FIELDS = (
+    "tw11",
+    "tw12",
+    "tw21",
+    "tw22",
+    "tw31",
+    "tw32",
+    "tw41",
+    "tw42",
+)
 
 
 class Kalender(models.Model):
@@ -33,15 +46,16 @@ class Kalender(models.Model):
     def __str__(self):
         return str(self.jaar)
 
+    @property
+    def toetsweken(self) -> List[int]:
+        return [getattr(self, field) for field in TOETSWEEK_FIELDS]
+
 
 class Overstap(models.Model):
     id = models.AutoField(db_column="OCO_ID", primary_key=True)
     jaar = models.IntegerField(db_column="OCO_Jaar", blank=True, null=True)
     klas = models.IntegerField(
-        db_column="OCO_Klas",
-        choices=Leerjaren.choices,
-        blank=True,
-        null=True,
+        db_column="OCO_Klas", choices=Leerjaren.choices, blank=True, null=True,
     )
     vak = models.IntegerField(db_column="OCO_Vak", blank=True, null=True)
     cohort = models.CharField(
@@ -62,10 +76,7 @@ class Toets(models.Model):
     id = models.AutoField(db_column="OCT_ID", primary_key=True)
     jaar = models.IntegerField(db_column="OCT_Jaar", blank=True, null=True)
     klas = models.IntegerField(
-        db_column="OCT_Klas",
-        choices=Leerjaren.choices,
-        blank=True,
-        null=True
+        db_column="OCT_Klas", choices=Leerjaren.choices, blank=True, null=True
     )
     cohort = models.CharField(
         db_column="OCT_Cohort", max_length=15, blank=True, null=True
@@ -76,7 +87,9 @@ class Toets(models.Model):
     user = models.ForeignKey(
         "User", db_column="OCT_User", blank=True, null=True, on_delete=models.SET_NULL
     )
-    type = models.IntegerField(db_column="OCT_Type", blank=True, null=True)
+    type = models.IntegerField(
+        db_column="OCT_Type", choices=Types.choices, blank=True, null=True,
+    )
     code = models.CharField(db_column="OCT_Code", max_length=6, blank=True, null=True)
     omschrijving = models.CharField(
         db_column="OCT_Omschrijving", max_length=200, blank=True, null=True
@@ -90,7 +103,13 @@ class Toets(models.Model):
     )
     datum = models.IntegerField(db_column="OCT_Datum", blank=True, null=True)
     periode = models.IntegerField(db_column="OCT_Periode", blank=True, null=True)
-    soortwerk = models.ForeignKey("Werk", db_column="OCT_SoortWerk", blank=True, null=True, on_delete=models.SET_NULL)
+    soortwerk = models.ForeignKey(
+        "Werk",
+        db_column="OCT_SoortWerk",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
     tijd = models.IntegerField(db_column="OCT_Tijd", blank=True, null=True)
     weging_ed4 = models.IntegerField(db_column="OCT_Weging_ED4", blank=True, null=True)
     weging_ed5 = models.IntegerField(db_column="OCT_Weging_ED5", blank=True, null=True)
