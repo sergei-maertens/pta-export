@@ -94,8 +94,6 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "pta_export.utils.context_processors.settings",
-                # REQUIRED FOR ADMIN INDEX
-                "django_admin_index.context_processors.dashboard",
             ],
             "loaders": RAW_TEMPLATE_LOADERS,
         },
@@ -129,7 +127,7 @@ TIME_ZONE = "Europe/Amsterdam"
 
 USE_I18N = True
 
-USE_L10N = True
+USE_L10N = False
 
 USE_TZ = True
 
