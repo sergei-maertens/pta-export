@@ -34,5 +34,5 @@ uwsgi \
     --processes $uwsgi_processes \
     --threads $uwsgi_threads \
     --post-buffering=8192 \
-    --buffer-size=65535
-    # processes & threads are needed for concurrency without nginx sitting inbetween
+    --buffer-size=65535 \
+    --wsgi-disable-file-wrapper  # see https://github.com/unbit/uwsgi/issues/1126
