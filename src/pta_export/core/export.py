@@ -2,7 +2,7 @@ import html
 import logging
 from typing import Iterable, List, Optional, Tuple
 
-from django.db.models import Case, F, Prefetch, Value, When
+from django.db.models import Prefetch
 from django.utils.text import capfirst
 
 from docx import Document
@@ -15,6 +15,7 @@ from docx.shared import Inches, Mm, Pt
 
 from .constants import Leerjaren
 from .models import Kalender, Toets, Vak
+from .utils import get_se_weging
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +28,10 @@ LEERJAAR_WEGING = {
     Leerjaren.vwo_6: ("Weging ED6", "weging_ed6"),
 }
 
+SE_WEGING = {
+    Leerjaren.havo_5: True,
+    Leerjaren.vwo_6: True,
+}
 
 COLUMN_WIDTHS = {
     0: Inches(0.597),
@@ -43,7 +48,6 @@ HEADER_BG_COLOR = "D9D9D9"
 
 
 def export(year: int, leerjaar: int) -> Document:
-    # complex sorting - year starts around week 33
     toetsen = Toets.objects.filter(jaar=year, klas=leerjaar).order_by("lesweek")
     vakken = Vak.objects.prefetch_related(
         Prefetch("toets_set", queryset=toetsen, to_attr="toetsen")
@@ -52,7 +56,9 @@ def export(year: int, leerjaar: int) -> Document:
 
 
 def get_toets_table(
-    vak: Vak, toetsweken: List[int], weging: Optional[Tuple[str, str]]
+    vak: Vak,
+    toetsweken: List[int],
+    weging: Optional[Tuple[str, str]],
 ) -> List[List[str]]:
     header = [
         "Code",
@@ -148,6 +154,21 @@ def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Documen
         for row in table.rows:
             row.height_rule = WD_ROW_HEIGHT_RULE.AT_LEAST
             row.height = Inches(0.276)
+
+        # add note for se_weging
+        se_weging = get_se_weging(year, leerjaar, vak)
+        if se_weging is not None:
+            denumerator, *numerators = se_weging
+
+            bits = []
+            for numerator, label in zip(numerators, ("ED4", "ED5", "ED6")):
+                if not numerator:
+                    continue
+                bits.append(
+                    f"{numerator / denumerator:.01%} {label}"
+                )
+            full_text = f"Weging eindcijfer: {', '.join(bits)}"
+            document.add_paragraph(full_text)
 
         document.add_page_break()
 
