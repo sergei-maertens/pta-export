@@ -29,6 +29,7 @@ idna==2.9                 # via requests
 lxml==4.5.0               # via -r requirements/base.txt, pyquery, python-docx
 markdown==3.2.2           # via -r requirements/base.txt
 mysqlclient==1.4.6        # via -r requirements/base.txt
+psycopg2==2.8.5           # via -r requirements/base.txt
 pyquery==1.4.1            # via -r requirements/test-tools.in
 python-dateutil==2.8.1    # via faker, freezegun
 python-decouple==3.3      # via -r requirements/base.txt

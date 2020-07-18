@@ -19,6 +19,7 @@ djangorestframework==3.11.0  # via -r requirements/base.in
 lxml==4.5.0               # via python-docx
 markdown==3.2.2           # via -r requirements/base.in
 mysqlclient==1.4.6        # via -r requirements/base.in
+psycopg2==2.8.5           # via -r requirements/base.in
 python-decouple==3.3      # via -r requirements/base.in
 python-docx==0.8.10       # via -r requirements/base.in
 python-dotenv==0.13.0     # via -r requirements/base.in

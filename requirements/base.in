@@ -1,6 +1,7 @@
 # Core python libraries
 markdown
 mysqlclient  # database driver
+psycopg2
 pytz  # handle timezones
 python-docx
 python-dotenv  # environment variables for secrets

@@ -31,14 +31,26 @@ ALLOWED_HOSTS = []
 
 DATABASES = {
     "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("DJANGO_DB_NAME", "pta_export"),
+        "USER": os.getenv("DJANGO_DB_USER", "pta_export"),
+        "PASSWORD": os.getenv("DJANGO_DB_PASSWORD", "pta_export"),
+        "HOST": os.getenv("DJANGO_DB_HOST", "localhost"),
+        "PORT": os.getenv("DJANGO_DB_PORT", 5432),
+    },
+    "ocpta": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": os.getenv("DB_NAME", "ocptanl_pta"),
-        "USER": os.getenv("DB_USER", "ocptanl_pta"),
-        "PASSWORD": os.getenv("DB_PASSWORD", "ocptanl_pta"),
-        "HOST": os.getenv("DB_HOST", "localhost"),
-        "PORT": os.getenv("DB_PORT", 3306),
-    }
+        "NAME": os.getenv("OCPTA_DB_NAME", "ocptanl_pta"),
+        "USER": os.getenv("OCPTA_DB_USER", "ocptanl_pta"),
+        "PASSWORD": os.getenv("OCPTA_DB_PASSWORD", "ocptanl_pta"),
+        "HOST": os.getenv("OCPTA_DB_HOST", "localhost"),
+        "PORT": os.getenv("OCPTA_DB_PORT", 3306),
+    },
 }
+
+DATABASE_ROUTERS = [
+    "pta_export.db_router.OCPTARouter",
+]
 
 # Application definition
 
