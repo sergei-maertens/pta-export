@@ -1,6 +1,5 @@
 import html
 import logging
-import tempfile
 from typing import Iterable, List, Optional, Tuple
 
 from django.db.models import Case, F, Prefetch, Value, When
@@ -45,16 +44,7 @@ HEADER_BG_COLOR = "D9D9D9"
 
 def export(year: int, leerjaar: int) -> Document:
     # complex sorting - year starts around week 33
-    toetsen = (
-        Toets.objects.filter(jaar=year, klas=leerjaar)
-        .annotate(
-            rel_week=Case(
-                When(week__gte=33, then=F("week") - Value(33)),
-                When(week__lt=33, then=F("week") + Value(-33 + 52)),
-            )
-        )
-        .order_by("rel_week")
-    )
+    toetsen = Toets.objects.filter(jaar=year, klas=leerjaar).order_by("lesweek")
     vakken = Vak.objects.prefetch_related(
         Prefetch("toets_set", queryset=toetsen, to_attr="toetsen")
     )

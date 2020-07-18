@@ -25,6 +25,7 @@ class ToetsAdmin(admin.ModelAdmin):
         "omschrijving",
         "domein",
         "week",
+        "lesweek",
     )
     list_select_related = ("vak",)
     list_filter = ("jaar", "vak", "klas")

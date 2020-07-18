@@ -98,6 +98,7 @@ class Toets(models.Model):
         db_column="OCT_Domein", max_length=40, blank=True, null=True
     )
     week = models.IntegerField(db_column="OCT_Week", blank=True, null=True)
+    lesweek = models.IntegerField(db_column="OCT_Lesweek", blank=True, null=True)
     inleverdatum = models.IntegerField(
         db_column="OCT_InleverDatum", blank=True, null=True
     )
