@@ -4,6 +4,7 @@ from typing import Iterable, List, Optional, Tuple
 
 from django.db.models import Prefetch
 from django.utils.text import capfirst
+from django.contrib.staticfiles.storage import staticfiles_storage
 
 from docx import Document
 from docx.enum.section import WD_ORIENT
@@ -106,6 +107,7 @@ def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Documen
     weging = LEERJAAR_WEGING.get(leerjaar)
     _leerjaar = Leerjaren.labels[leerjaar]
     school_year = f"{year}-{year + 1}"
+    logo_path = staticfiles_storage.path("img/logopta.jpg")
 
     document = Document()
 
@@ -125,6 +127,11 @@ def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Documen
 
         header = f"PTA\t{capfirst(vak.naam)}\t{_leerjaar}\t{school_year}"
         document.add_heading("", level=1).add_run(header).bold = True
+
+        # add the logo
+        paragraph = document.add_paragraph()
+        paragraph.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+        paragraph.add_run().add_picture(logo_path, width=Inches(2.24))
 
         [header, *rows] = get_toets_table(vak, toetsweken, weging)
 
