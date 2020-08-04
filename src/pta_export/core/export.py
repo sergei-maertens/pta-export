@@ -120,6 +120,9 @@ def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Documen
     document.add_heading(f"PTAs {_leerjaar} {year}", level=0)
 
     for vak in vakken:
+        if not vak.toetsen:
+            continue
+
         header = f"PTA\t{capfirst(vak.naam)}\t{_leerjaar}\t{school_year}"
         document.add_heading("", level=1).add_run(header).bold = True
 
