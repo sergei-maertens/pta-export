@@ -35,14 +35,13 @@ SE_WEGING = {
 }
 
 COLUMN_WIDTHS = {
-    0: Inches(0.597),
-    1: Inches(4.106),
-    2: Inches(1.279),
-    3: Inches(0.69),
-    4: Inches(0.59),
-    5: Inches(0.886),
-    6: Inches(0.59),
-    "default": Inches(0.689),
+    0: Cm(1.51),
+    1: Cm(10.43),
+    2: Cm(3.25),
+    3: Cm(1.75),
+    4: Cm(1.5),
+    5: Cm(2.25),
+    6: Cm(1.5),
 }
 
 HEADER_BG_COLOR = "D9D9D9"
@@ -147,7 +146,7 @@ def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Documen
         # add the logo
         paragraph = document.add_paragraph()
         paragraph.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-        paragraph.add_run().add_picture(logo_path, width=Inches(2.24))
+        paragraph.add_run().add_picture(logo_path, width=Cm(5.68))
 
         [header, *rows] = get_toets_table(vak, toetsweken, weging)
 
@@ -174,12 +173,25 @@ def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Documen
                 center = index != 1
                 _style_cell(cell, center=center)
 
+        # set the column widths
+        num_extra_columns = len(table.columns) - len(COLUMN_WIDTHS)
+        remaining_width = (
+            section.page_width
+            - section.left_margin
+            - section.right_margin
+            - sum(COLUMN_WIDTHS.values())
+            - Mm(1)
+        )
+        extra_column_width = int(remaining_width / num_extra_columns)
         for index, column in enumerate(table.columns):
-            column.width = COLUMN_WIDTHS.get(index, COLUMN_WIDTHS["default"])
+            column.width = COLUMN_WIDTHS.get(index, extra_column_width)
+            # sigh... dumb format
+            for cell in column.cells:
+                cell.width = column.width
 
         for row in table.rows:
             row.height_rule = WD_ROW_HEIGHT_RULE.AT_LEAST
-            row.height = Inches(0.276)
+            row.height = Cm(0.7)
 
         # add note for se_weging
         se_weging = get_se_weging(year, leerjaar, vak)
