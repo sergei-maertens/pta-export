@@ -3,6 +3,7 @@ from typing import List
 from django.db import models
 
 from .constants import Leerjaren, Types
+from .fields import Latin1ButActuallyCP1252CharField
 
 TOETSWEEK_FIELDS = (
     "tw11",
@@ -91,7 +92,7 @@ class Toets(models.Model):
         db_column="OCT_Type", choices=Types.choices, blank=True, null=True,
     )
     code = models.CharField(db_column="OCT_Code", max_length=6, blank=True, null=True)
-    omschrijving = models.CharField(
+    omschrijving = Latin1ButActuallyCP1252CharField(
         db_column="OCT_Omschrijving", max_length=200, blank=True, null=True
     )
     domein = models.CharField(
