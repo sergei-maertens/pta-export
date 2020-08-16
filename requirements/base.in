@@ -1,6 +1,8 @@
 # Core python libraries
+bcrypt
 markdown
 mysqlclient  # database driver
+passlib
 psycopg2
 pytz  # handle timezones
 python-docx

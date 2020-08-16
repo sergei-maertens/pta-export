@@ -258,6 +258,7 @@ AUTH_USER_MODEL = "accounts.User"
 # Allow logging in with both username+password and email+password
 AUTHENTICATION_BACKENDS = [
     "axes.backends.AxesBackend",
+    "pta_export.accounts.backends.OCPTABackend",
     "pta_export.accounts.backends.UserModelEmailBackend",
     "django.contrib.auth.backends.ModelBackend",
 ]

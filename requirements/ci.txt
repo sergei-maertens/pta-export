@@ -5,8 +5,10 @@
 #    pip-compile --no-index --output-file=requirements/ci.txt requirements/base.txt requirements/test-tools.in
 #
 asgiref==3.2.7            # via -r requirements/base.txt, django
+bcrypt==3.1.7             # via -r requirements/base.txt
 beautifulsoup4==4.9.0     # via webtest
 certifi==2020.4.5.1       # via -r requirements/base.txt, requests, sentry-sdk
+cffi==1.14.2              # via -r requirements/base.txt, bcrypt
 chardet==3.0.4            # via requests
 coverage==4.5.4           # via -r requirements/test-tools.in
 cssselect==1.1.0          # via pyquery
@@ -29,7 +31,9 @@ idna==2.9                 # via requests
 lxml==4.5.0               # via -r requirements/base.txt, pyquery, python-docx
 markdown==3.2.2           # via -r requirements/base.txt
 mysqlclient==1.4.6        # via -r requirements/base.txt
+passlib==1.7.2            # via -r requirements/base.txt
 psycopg2==2.8.5           # via -r requirements/base.txt
+pycparser==2.20           # via -r requirements/base.txt, cffi
 pyquery==1.4.1            # via -r requirements/test-tools.in
 python-dateutil==2.8.1    # via faker, freezegun
 python-decouple==3.3      # via -r requirements/base.txt
@@ -40,7 +44,7 @@ redis==3.5.1              # via -r requirements/base.txt, django-redis
 requests-mock==1.8.0      # via -r requirements/test-tools.in
 requests==2.23.0          # via requests-mock
 sentry-sdk==0.14.3        # via -r requirements/base.txt
-six==1.14.0               # via -r requirements/base.txt, django-choices, django-compat, freezegun, python-dateutil, requests-mock, webtest
+six==1.14.0               # via -r requirements/base.txt, bcrypt, django-choices, django-compat, freezegun, python-dateutil, requests-mock, webtest
 soupsieve==2.0            # via beautifulsoup4
 sqlparse==0.3.1           # via -r requirements/base.txt, django
 tblib==1.6.0              # via -r requirements/test-tools.in
