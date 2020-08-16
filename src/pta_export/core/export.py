@@ -9,10 +9,10 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 from docx import Document
 from docx.enum.section import WD_ORIENT
 from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT, WD_ROW_HEIGHT_RULE
-from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_TAB_ALIGNMENT
 from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls
-from docx.shared import Inches, Mm, Pt
+from docx.shared import Inches, Mm, Pt, Cm
 
 from .constants import Leerjaren
 from .models import Kalender, Toets, Vak
@@ -117,6 +117,11 @@ def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Documen
     # A4 page size
     section.page_width = Mm(297)
     section.page_height = Mm(210)
+    # set correct margins
+    section.bottom_margin = Cm(2.5)
+    section.top_margin = Cm(2.5)
+    section.left_margin = Cm(2)
+    section.right_margin = Cm(2)
 
     # add the document title
     document.add_heading(f"PTAs {_leerjaar} {year}", level=0)
@@ -125,8 +130,19 @@ def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Documen
         if not vak.toetsen:
             continue
 
-        header = f"PTA\t{capfirst(vak.naam)}\t{_leerjaar}\t{school_year}"
-        document.add_heading("", level=1).add_run(header).bold = True
+        # set up the table header
+        header_p = document.add_paragraph()
+        header_tab_stops = header_p.paragraph_format.tab_stops
+        header_tab_stops.add_tab_stop(Cm(3))
+        header_tab_stops.add_tab_stop(Cm(16), alignment=WD_TAB_ALIGNMENT.RIGHT)
+        header_tab_stops.add_tab_stop(Cm(17.25))
+
+        header_run = header_p.add_run(
+            f"PTA\t{capfirst(vak.naam)}\t{_leerjaar}\t{school_year}"
+        )
+        header_run.font.name = "Arial"
+        header_run.font.size = Pt(14)
+        header_run.bold = True
 
         # add the logo
         paragraph = document.add_paragraph()
@@ -186,7 +202,7 @@ def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Documen
 
 
 def _make_bold(cell):
-    cell.paragraphs[0].runs[0].font.bold = True
+    cell.paragraphs[0].runs[0].bold = True
 
 
 def _style_cell(cell, center=True):

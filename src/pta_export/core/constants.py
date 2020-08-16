@@ -30,13 +30,13 @@ class Dagen(models.IntegerChoices):
 
 class Leerjaren(models.IntegerChoices):
     empty = 0, ""
-    havo_4 = 1, "4 havo"
-    havo_5 = 2, "5 havo"
-    vwo_4 = 3, "4 vwo"
-    vwo_5 = 4, "5 vwo"
-    vwo_6 = 5, "6 vwo"
-    overstappers_vwo_5 = 6, "overstappers vwo 5"
-    overstappers_vwo_6 = 7, "overstappers vwo 6"
+    havo_4 = 1, "4 Havo"
+    havo_5 = 2, "5 Havo"
+    vwo_4 = 3, "4 VWO"
+    vwo_5 = 4, "5 VWO"
+    vwo_6 = 5, "6 VWO"
+    overstappers_vwo_5 = 6, "overstappers VWO 5"
+    overstappers_vwo_6 = 7, "overstappers VWO 6"
 
 
 class Types(models.IntegerChoices):
