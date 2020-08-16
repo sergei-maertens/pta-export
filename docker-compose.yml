@@ -2,15 +2,13 @@
 version: '3'
 
 services:
-  db:
-    image: mariadb:10.5-bionic
+  postgres:
+    image: postgres:12
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-sosecret}
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-pta_export}
-      MYSQL_USER: ${MYSQL_USER:-pta_export}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-pta_export}
+      POSTGRES_PASSWORD: ${DJANGO_DB_PASSWORD:-overrideme}
+      POSTGRES_DB: ${DJANGO_DB_NAME:-ocpta}
     volumes:
-      - db:/var/lib/mysql
+      - db:/var/lib/postgresql
       - ./docker-init-db.sql:/docker-entrypoint-initdb.d/init_db.sql
 
   web:
@@ -19,13 +17,19 @@ services:
     environment:
       DJANGO_SETTINGS_MODULE: pta_export.conf.docker
       SECRET_KEY: ${SECRET_KEY:-dvoyzzh@eqlv0=gxal%kb3106dmd4=nx)2#2+czs-=-#p9q_(_}
-      DB_NAME: ${MYSQL_DATABASE:-pta_export}
-      DB_USER: ${MYSQL_USER:-pta_export}
-      DB_PASSWORD: ${MYSQL_PASSWORD:-pta_export}
+
+      DJANGO_DB_NAME: ${DJANGO_DB_NAME:-ocpta}
+      DJANGO_DB_USER: ${DJANGO_DB_USER:-postgres}
+      DJANGO_DB_PASSWORD: ${DJANGO_DB_PASSWORD:-overrideme}
+      DJANGO_DB_HOST: ${DJANGO_DB_HOST:-postgres}
+
+      OCPTA_DB_USER: ${OCPTA_DB_USER:-pta_export}
+      OCPTA_DB_PASSWORD: ${OCPTA_DB_PASSWORD:-pta_export}
+      OCPTA_DB_HOST: ${OCPTA_DB_HOST:-db}
     ports:
       - ${WEB_PORT:-8000}:8000
     depends_on:
-      - db
+      - postgres
 
 
 volumes:
