@@ -3,7 +3,7 @@ import logging
 from typing import Iterable, List, Optional, Tuple
 
 from django.db.models import Prefetch
-from django.utils.text import capfirst
+from django.utils.text import capfirst, normalize_newlines
 from django.contrib.staticfiles.storage import staticfiles_storage
 
 from docx import Document
@@ -83,7 +83,9 @@ def get_toets_table(
 
         row = [
             toets.code,
-            html.unescape(toets.omschrijving),
+            html.unescape(
+                normalize_newlines(toets.omschrijving).strip()
+            ),
             toets.domein,
             periode,
             toets.week or "",
