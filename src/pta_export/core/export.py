@@ -30,10 +30,6 @@ LEERJAAR_WEGING = {
     Leerjaren.vwo_6: ("Weging ED6", "weging_ed6"),
 }
 
-SE_WEGING = {
-    Leerjaren.havo_5: True,
-    Leerjaren.vwo_6: True,
-}
 
 COLUMN_WIDTHS = {
     0: Cm(1.51),
@@ -72,7 +68,7 @@ def get_toets_table(
         "Periode",
         "Week",
         "Soort werk",
-        "Tijd",
+        "Tijd\n(min)",
         "Weging R4",
     ]
 
