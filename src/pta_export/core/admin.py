@@ -1,5 +1,7 @@
 from django.contrib import admin
+from django.contrib.admin import widgets
 
+from .fields import IntegerDateField
 from .models import Kalender, Overstap, Toets, User, Vak, Voetnoot, Werk
 
 
@@ -29,6 +31,9 @@ class ToetsAdmin(admin.ModelAdmin):
     )
     list_select_related = ("vak",)
     list_filter = ("jaar", "vak", "klas")
+    formfield_overrides = {
+        IntegerDateField: {"widget": widgets.AdminDateWidget},
+    }
 
 
 @admin.register(User)

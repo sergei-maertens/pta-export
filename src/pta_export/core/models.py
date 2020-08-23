@@ -3,7 +3,7 @@ from typing import List
 from django.db import models
 
 from .constants import Leerjaren, Types
-from .fields import Latin1ButActuallyCP1252CharField
+from .fields import IntegerDateField, Latin1ButActuallyCP1252CharField
 
 TOETSWEEK_FIELDS = (
     "tw11",
@@ -116,9 +116,7 @@ class Toets(models.Model):
     )
     week = models.IntegerField(db_column="OCT_Week", blank=True, null=True)
     lesweek = models.IntegerField(db_column="OCT_Lesweek", blank=True, null=True)
-    inleverdatum = models.IntegerField(
-        db_column="OCT_InleverDatum", blank=True, null=True
-    )
+    inleverdatum = IntegerDateField(db_column="OCT_InleverDatum", blank=True, null=True)
     datum = models.IntegerField(db_column="OCT_Datum", blank=True, null=True)
     periode = models.IntegerField(db_column="OCT_Periode", blank=True, null=True)
     soortwerk = models.ForeignKey(

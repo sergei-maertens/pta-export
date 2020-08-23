@@ -5,6 +5,8 @@ from typing import Dict, Iterable, List, Optional, Tuple
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.db.models import Prefetch
 from django.db.models.functions import Lower
+from django.template.defaultfilters import date as format_date
+from django.utils import translation
 from django.utils.text import capfirst, normalize_newlines
 
 from docx import Document
@@ -50,14 +52,16 @@ HEADER_BG_COLOR = "D9D9D9"
 
 
 def export(year: int, leerjaar: int) -> Document:
+    translation.activate("nl_NL")
     toetsen = Toets.objects.filter(jaar=year, klas=leerjaar).order_by("lesweek")
     voetnoten = Voetnoot.objects.order_by("id")
-
     vakken = Vak.objects.prefetch_related(
         Prefetch("toets_set", queryset=toetsen, to_attr="toetsen"),
         Prefetch("voetnoot_set", queryset=voetnoten, to_attr="voetnoten"),
     ).order_by(Lower("naam"))
-    return create_document(year, leerjaar, vakken)
+    doc = create_document(year, leerjaar, vakken)
+    translation.deactivate()
+    return doc
 
 
 def get_toets_table(
@@ -95,6 +99,12 @@ def get_toets_table(
 
         omschrijving = html.unescape(normalize_newlines(toets.omschrijving).strip())
         voetnoot = toets.voetnoot or ""
+
+        if toets.inleverdatum:
+            merger = "" if not voetnoot else "\n"
+            formatted = format_date(toets.inleverdatum, "d F Y")
+            inleverdatum = f"inleverdatum: {formatted}"
+            voetnoot += f"{merger}{inleverdatum}"
 
         row = [
             toets.code,
