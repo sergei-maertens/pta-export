@@ -231,8 +231,11 @@ def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Documen
             for numerator, label in zip(numerators, ("ED4", "ED5", "ED6")):
                 if not numerator:
                     continue
-                bits.append(f"{numerator / denumerator:.01%} {label}")
-            full_text = f"Weging eindcijfer: {', '.join(bits)}"
+                bits.append(f"{numerator}x {label}")
+
+            _weging = f"({' + '.join(bits)}) / {denumerator})"
+            full_text = f"Weging eindcijfer: {_weging}"
+
             p_weging = document.add_paragraph(full_text)
             p_weging.paragraph_format.space_before = Pt(10)
             p_weging.style.font.name = "Arial"
