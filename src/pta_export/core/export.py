@@ -122,9 +122,6 @@ def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Documen
     section.left_margin = Cm(2)
     section.right_margin = Cm(2)
 
-    # add the document title
-    document.add_heading(f"PTAs {_leerjaar} {year}", level=0)
-
     for vak in vakken:
         if not vak.toetsen:
             continue
