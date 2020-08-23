@@ -1,9 +1,8 @@
 import math
-from typing import Tuple, Optional
+from typing import Optional, Tuple
 
 from .constants import Breuken, Leerjaren
 from .models import Vak
-
 
 YEAR_4 = (Leerjaren.havo_4, Leerjaren.vwo_4)
 YEAR_5 = (Leerjaren.havo_5, Leerjaren.vwo_5)
@@ -26,7 +25,9 @@ def get_previous_leerjaar(leerjaar: int) -> int:
     return container[idx - 1]
 
 
-def get_se_weging(year: int, leerjaar: int, vak: Vak) -> Optional[Tuple[int, int, int, int]]:
+def get_se_weging(
+    year: int, leerjaar: int, vak: Vak
+) -> Optional[Tuple[int, int, int, int]]:
     """
     Determine the "SE-weging".
 
@@ -43,7 +44,9 @@ def get_se_weging(year: int, leerjaar: int, vak: Vak) -> Optional[Tuple[int, int
 
     """
     assert hasattr(vak, "toetsen"), "Toetsen must be prefetched"
-    assert all(toets.jaar == year for toets in vak.toetsen), "All toetsen must be from the same year"
+    assert all(
+        toets.jaar == year for toets in vak.toetsen
+    ), "All toetsen must be from the same year"
 
     # year 4 -> 100% ED4, nothing to calculate
     if leerjaar in YEAR_4:
@@ -57,11 +60,15 @@ def get_se_weging(year: int, leerjaar: int, vak: Vak) -> Optional[Tuple[int, int
     previous_leerjaar = get_previous_leerjaar(leerjaar)
 
     # fetch a Toets from the previous year
-    toets_one_year_ago = vak.toets_set.filter(jaar=year - 1, klas=previous_leerjaar).first()
+    toets_one_year_ago = vak.toets_set.filter(
+        jaar=year - 1, klas=previous_leerjaar
+    ).first()
 
     if leerjaar in YEAR_6:
         two_leerjaren_ago = get_previous_leerjaar(previous_leerjaar)
-        toets_two_years_ago = vak.toets_set.filter(jaar=year - 2, klas=two_leerjaren_ago).first()
+        toets_two_years_ago = vak.toets_set.filter(
+            jaar=year - 2, klas=two_leerjaren_ago
+        ).first()
         toets_ed4 = toets_two_years_ago
         toets_ed5 = toets_one_year_ago
     else:

@@ -1,8 +1,8 @@
-from passlib.hash import bcrypt
-
 from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.hashers import check_password
+
+from passlib.hash import bcrypt
 
 from pta_export.core.models import User as OCPTAUser
 
@@ -15,7 +15,9 @@ class UserModelEmailBackend(ModelBackend):
     def authenticate(self, request, username=None, password=None, **kwargs):
         try:
             user = get_user_model().objects.get(email__iexact=username, is_active=True)
-            if check_password(password, user.password) and self.user_can_authenticate(user):
+            if check_password(password, user.password) and self.user_can_authenticate(
+                user
+            ):
                 return user
         except get_user_model().DoesNotExist:
             # No user was found, return None - triggers default login failed
@@ -23,7 +25,6 @@ class UserModelEmailBackend(ModelBackend):
 
 
 class OCPTABackend(ModelBackend):
-
     def authenticate(self, request, username=None, password=None, **kwargs):
         DjangoUser = get_user_model()
 

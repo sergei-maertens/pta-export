@@ -2,9 +2,9 @@ import html
 import logging
 from typing import Dict, Iterable, List, Optional, Tuple
 
+from django.contrib.staticfiles.storage import staticfiles_storage
 from django.db.models import Prefetch
 from django.utils.text import capfirst, normalize_newlines
-from django.contrib.staticfiles.storage import staticfiles_storage
 
 from docx import Document
 from docx.enum.section import WD_ORIENT
@@ -12,7 +12,7 @@ from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT, WD_ROW_HEIGHT_RULE
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_TAB_ALIGNMENT
 from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls
-from docx.shared import Mm, Pt, Cm
+from docx.shared import Cm, Mm, Pt
 
 from .constants import Leerjaren
 from .models import Kalender, Toets, Vak
@@ -87,9 +87,7 @@ def get_toets_table(
 
         row = [
             toets.code,
-            html.unescape(
-                normalize_newlines(toets.omschrijving).strip()
-            ),
+            html.unescape(normalize_newlines(toets.omschrijving).strip()),
             toets.domein,
             periode,
             week,
@@ -206,9 +204,7 @@ def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Documen
             for numerator, label in zip(numerators, ("ED4", "ED5", "ED6")):
                 if not numerator:
                     continue
-                bits.append(
-                    f"{numerator / denumerator:.01%} {label}"
-                )
+                bits.append(f"{numerator / denumerator:.01%} {label}")
             full_text = f"Weging eindcijfer: {', '.join(bits)}"
             document.add_paragraph(full_text)
 
