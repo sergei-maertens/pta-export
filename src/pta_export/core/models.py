@@ -17,6 +17,14 @@ TOETSWEEK_FIELDS = (
 )
 
 
+TOETSWEEK_PERIODES = {
+    1: ["tw11", "tw12"],
+    2: ["tw21", "tw22"],
+    3: ["tw31", "tw32"],
+    4: ["tw41", "tw42"],
+}
+
+
 class Kalender(models.Model):
     id = models.AutoField(db_column="OCK_ID", primary_key=True)
     jaar = models.IntegerField(db_column="OCK_Jaar", blank=True, null=True)
@@ -50,6 +58,14 @@ class Kalender(models.Model):
     @property
     def toetsweken(self) -> List[int]:
         return [getattr(self, field) for field in TOETSWEEK_FIELDS]
+
+    @property
+    def toetsweek_periodes(self):
+        weeknrs_per_periode = {
+            periode: [getattr(self, field) for field in fields]
+            for periode, fields in TOETSWEEK_PERIODES.items()
+        }
+        return weeknrs_per_periode
 
 
 class Overstap(models.Model):

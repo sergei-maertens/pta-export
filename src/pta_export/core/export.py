@@ -1,6 +1,6 @@
 import html
 import logging
-from typing import Iterable, List, Optional, Tuple
+from typing import Dict, Iterable, List, Optional, Tuple
 
 from django.db.models import Prefetch
 from django.utils.text import capfirst, normalize_newlines
@@ -12,7 +12,7 @@ from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT, WD_ROW_HEIGHT_RULE
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_TAB_ALIGNMENT
 from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls
-from docx.shared import Inches, Mm, Pt, Cm
+from docx.shared import Mm, Pt, Cm
 
 from .constants import Leerjaren
 from .models import Kalender, Toets, Vak
@@ -57,6 +57,7 @@ def export(year: int, leerjaar: int) -> Document:
 
 def get_toets_table(
     vak: Vak,
+    toetsweek_periodes: Dict[int, List[int]],
     toetsweken: List[int],
     weging: Optional[Tuple[str, str]],
 ) -> List[List[str]]:
@@ -78,8 +79,11 @@ def get_toets_table(
 
     for toets in vak.toetsen:
         periode = toets.periode
+        week = toets.week or ""
+
         if toets.week in toetsweken:
             periode = f"{periode} (tw)"
+            week = "/".join([str(wk) for wk in toetsweek_periodes[toets.periode]])
 
         row = [
             toets.code,
@@ -88,7 +92,7 @@ def get_toets_table(
             ),
             toets.domein,
             periode,
-            toets.week or "",
+            week,
             toets.soortwerk.naam,
             toets.tijd or "",
             toets.weging_r4 or "",
@@ -104,7 +108,8 @@ def get_toets_table(
 
 
 def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Document:
-    toetsweken = Kalender.objects.get(jaar=year).toetsweken
+    toetsweek_periodes = Kalender.objects.get(jaar=year).toetsweek_periodes
+    toetsweken = sum(toetsweek_periodes.values(), [])
     weging = LEERJAAR_WEGING.get(leerjaar)
     _leerjaar = Leerjaren.labels[leerjaar]
     school_year = f"{year}-{year + 1}"
@@ -147,7 +152,7 @@ def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Documen
         paragraph.alignment = WD_ALIGN_PARAGRAPH.RIGHT
         paragraph.add_run().add_picture(logo_path, width=Cm(5.68))
 
-        [header, *rows] = get_toets_table(vak, toetsweken, weging)
+        [header, *rows] = get_toets_table(vak, toetsweek_periodes, toetsweken, weging)
 
         table = document.add_table(rows=len(rows) + 1, cols=len(header))
         table.style = "TableGrid"
