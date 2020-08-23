@@ -98,17 +98,16 @@ def get_toets_table(
             week = "/".join([str(wk) for wk in toetsweek_periodes[toets.periode]])
 
         omschrijving = html.unescape(normalize_newlines(toets.omschrijving).strip())
-        voetnoot = toets.voetnoot or ""
 
         if toets.inleverdatum:
-            merger = "" if not voetnoot else "\n"
             formatted = format_date(toets.inleverdatum, "d F Y")
             inleverdatum = f"inleverdatum: {formatted}"
-            voetnoot += f"{merger}{inleverdatum}"
+        else:
+            inleverdatum = ""
 
         row = [
             toets.code,
-            (omschrijving, voetnoot),
+            (omschrijving, inleverdatum),
             toets.domein,
             periode,
             week,
@@ -161,9 +160,8 @@ def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Documen
         header_tab_stops.add_tab_stop(Cm(16), alignment=WD_TAB_ALIGNMENT.RIGHT)
         header_tab_stops.add_tab_stop(Cm(17.25))
 
-        header_run = header_p.add_run(
-            f"PTA\t{capfirst(vak.naam)}\t{_leerjaar}\t{school_year}"
-        )
+        vak_naam = capfirst(html.unescape(vak.naam))
+        header_run = header_p.add_run(f"PTA\t{vak_naam}\t{_leerjaar}\t{school_year}")
         header_run.font.name = "Arial"
         header_run.font.size = Pt(14)
         header_run.bold = True
@@ -255,7 +253,7 @@ def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Documen
                     continue
                 bits.append(f"{numerator}x {label}")
 
-            _weging = f"({' + '.join(bits)}) / {denumerator})"
+            _weging = f"({' + '.join(bits)}) / {denumerator}"
             full_text = f"Weging eindcijfer: {_weging}"
 
             p_weging = document.add_paragraph(full_text)
@@ -263,7 +261,11 @@ def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Documen
             p_weging.style.font.name = "Arial"
             p_weging.style.font.size = Pt(10)
 
-        if vak.voetnoten:
+        vak_voetnoten = [voetnoot.noot for voetnoot in vak.voetnoten]
+        toets_voetnoten = [toets.voetnoot for toets in vak.toetsen if toets.voetnoot]
+        all_voetnoten = vak_voetnoten + toets_voetnoten
+
+        if all_voetnoten:
             voetnoten = document.add_paragraph("opmerking\n")
             voetnoten.runs[0].bold = True
             voetnoten.paragraph_format.space_before = Pt(10)
@@ -271,8 +273,8 @@ def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Documen
             voetnoten.style.font.name = "Arial"
             voetnoten.style.font.size = Pt(10)
 
-            for voetnoot in vak.voetnoten:
-                _voetnoot = normalize_newlines(voetnoot.noot)
+            for voetnoot in all_voetnoten:
+                _voetnoot = normalize_newlines(voetnoot)
                 voetnoten.add_run(f"{_voetnoot}\n")
 
         document.add_page_break()
