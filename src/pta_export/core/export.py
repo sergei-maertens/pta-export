@@ -4,6 +4,7 @@ from typing import Dict, Iterable, List, Optional, Tuple
 
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.db.models import Prefetch
+from django.db.models.functions import Lower
 from django.utils.text import capfirst, normalize_newlines
 
 from docx import Document
@@ -54,7 +55,7 @@ def export(year: int, leerjaar: int) -> Document:
     vakken = Vak.objects.prefetch_related(
         Prefetch("toets_set", queryset=toetsen, to_attr="toetsen"),
         Prefetch("voetnoot_set", queryset=voetnoten, to_attr="voetnoten"),
-    )
+    ).order_by(Lower("naam"))
     return create_document(year, leerjaar, vakken)
 
 
