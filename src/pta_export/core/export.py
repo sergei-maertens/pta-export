@@ -15,7 +15,7 @@ from docx.oxml.ns import nsdecls
 from docx.shared import Cm, Mm, Pt
 
 from .constants import Leerjaren
-from .models import Kalender, Toets, Vak
+from .models import Kalender, Toets, Vak, Voetnoot
 from .utils import get_se_weging
 
 logger = logging.getLogger(__name__)
@@ -49,8 +49,11 @@ HEADER_BG_COLOR = "D9D9D9"
 
 def export(year: int, leerjaar: int) -> Document:
     toetsen = Toets.objects.filter(jaar=year, klas=leerjaar).order_by("lesweek")
+    voetnoten = Voetnoot.objects.order_by("id")
+
     vakken = Vak.objects.prefetch_related(
-        Prefetch("toets_set", queryset=toetsen, to_attr="toetsen")
+        Prefetch("toets_set", queryset=toetsen, to_attr="toetsen"),
+        Prefetch("voetnoot_set", queryset=voetnoten, to_attr="voetnoten"),
     )
     return create_document(year, leerjaar, vakken)
 
@@ -234,6 +237,18 @@ def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Documen
                 bits.append(f"{numerator / denumerator:.01%} {label}")
             full_text = f"Weging eindcijfer: {', '.join(bits)}"
             document.add_paragraph(full_text)
+
+        if vak.voetnoten:
+            voetnoten = document.add_paragraph("\nopmerking\n")
+            voetnoten.runs[0].bold = True
+            voetnoten.runs[0].font.name = "Arial"
+            voetnoten.runs[0].font.size = Pt(10)
+
+            for voetnoot in vak.voetnoten:
+                _voetnoot = normalize_newlines(voetnoot.noot)
+                run = voetnoten.add_run(f"{_voetnoot}\n")
+                run.font.name = "Arial"
+                run.font.size = Pt(10)
 
         document.add_page_break()
 
