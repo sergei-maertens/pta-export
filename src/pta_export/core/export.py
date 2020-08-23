@@ -108,8 +108,8 @@ def get_toets_table(
         row = [
             toets.code,
             (omschrijving, inleverdatum),
-            toets.domein,
-            periode,
+            toets.domein or "",
+            periode or "",
             week,
             toets.soortwerk.naam,
             toets.tijd or "",
