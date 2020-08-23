@@ -85,9 +85,12 @@ def get_toets_table(
             periode = f"{periode} (tw)"
             week = "/".join([str(wk) for wk in toetsweek_periodes[toets.periode]])
 
+        omschrijving = html.unescape(normalize_newlines(toets.omschrijving).strip())
+        voetnoot = toets.voetnoot or ""
+
         row = [
             toets.code,
-            html.unescape(normalize_newlines(toets.omschrijving).strip()),
+            (omschrijving, voetnoot),
             toets.domein,
             periode,
             week,
@@ -166,11 +169,35 @@ def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Documen
         for index, row in enumerate(rows, 1):
             row_cells = table.rows[index].cells
             for _index, content in enumerate(row):
-                row_cells[_index].text = str(content)
+                center = _index != 1
+
+                cell = row_cells[_index]
+                cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
+
+                if isinstance(content, tuple):
+                    content, extra = content
+                else:
+                    extra = ""
+
+                par = cell.paragraphs[0]
+                if center:
+                    par.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+                run = par.add_run(text=str(content))
+                run.font.name = "Arial"
+                run.font.size = Pt(10)
+                if _index == 0:
+                    run.bold = True
+
+                if extra:
+                    extra_par = cell.add_paragraph()
+                    extra_run = extra_par.add_run(text=f"{extra}")
+                    extra_run.font.name = "Arial"
+                    extra_run.font.size = Pt(9)
+                    extra_run.italic = True
 
         # style the cells: widths, font
         for row in table.rows:
-            _make_bold(row.cells[0])
             for index, cell in enumerate(row.cells):
                 center = index != 1
                 _style_cell(cell, center=center)
