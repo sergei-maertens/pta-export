@@ -30,6 +30,11 @@ LEERJAAR_WEGING = {
     Leerjaren.vwo_6: ("Weging ED6", "weging_ed6"),
 }
 
+R4_LEERJAREN = (
+    Leerjaren.vwo_4,
+    Leerjaren.vwo_5,
+    Leerjaren.havo_4,
+)
 
 COLUMN_WIDTHS = {
     0: Cm(1.51),
@@ -56,6 +61,7 @@ def export(year: int, leerjaar: int) -> Document:
 
 
 def get_toets_table(
+    leerjaar: int,
     vak: Vak,
     toetsweek_periodes: Dict[int, List[int]],
     toetsweken: List[int],
@@ -69,8 +75,10 @@ def get_toets_table(
         "Week",
         "Soort werk",
         "Tijd\n(min)",
-        "Weging R4",
     ]
+
+    if leerjaar in R4_LEERJAREN:
+        header.append("Weging R4")
 
     if weging is not None:
         header.append(weging[0])
@@ -96,8 +104,10 @@ def get_toets_table(
             week,
             toets.soortwerk.naam,
             toets.tijd or "",
-            toets.weging_r4 or "",
         ]
+
+        if leerjaar in R4_LEERJAREN:
+            row.append(toets.weging_r4 or "")
 
         if weging is not None:
             row.append(getattr(toets, weging[1]) or "")
@@ -153,7 +163,9 @@ def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Documen
         paragraph.alignment = WD_ALIGN_PARAGRAPH.RIGHT
         paragraph.add_run().add_picture(logo_path, width=Cm(5.68))
 
-        [header, *rows] = get_toets_table(vak, toetsweek_periodes, toetsweken, weging)
+        [header, *rows] = get_toets_table(
+            leerjaar, vak, toetsweek_periodes, toetsweken, weging
+        )
 
         table = document.add_table(rows=len(rows) + 1, cols=len(header))
         table.style = "TableGrid"
