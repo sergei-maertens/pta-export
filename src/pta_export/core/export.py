@@ -78,7 +78,7 @@ def get_toets_table(
 
     for toets in vak.toetsen:
         periode = toets.periode
-        if periode in toetsweken:
+        if toets.week in toetsweken:
             periode = f"{periode} (tw)"
 
         row = [
