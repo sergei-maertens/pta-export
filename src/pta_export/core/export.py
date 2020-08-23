@@ -237,19 +237,22 @@ def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Documen
                     continue
                 bits.append(f"{numerator / denumerator:.01%} {label}")
             full_text = f"Weging eindcijfer: {', '.join(bits)}"
-            document.add_paragraph(full_text)
+            p_weging = document.add_paragraph(full_text)
+            p_weging.paragraph_format.space_before = Pt(10)
+            p_weging.style.font.name = "Arial"
+            p_weging.style.font.size = Pt(10)
 
         if vak.voetnoten:
-            voetnoten = document.add_paragraph("\nopmerking\n")
+            voetnoten = document.add_paragraph("opmerking\n")
             voetnoten.runs[0].bold = True
-            voetnoten.runs[0].font.name = "Arial"
-            voetnoten.runs[0].font.size = Pt(10)
+            voetnoten.paragraph_format.space_before = Pt(10)
+            voetnoten.style.font.bold = False
+            voetnoten.style.font.name = "Arial"
+            voetnoten.style.font.size = Pt(10)
 
             for voetnoot in vak.voetnoten:
                 _voetnoot = normalize_newlines(voetnoot.noot)
-                run = voetnoten.add_run(f"{_voetnoot}\n")
-                run.font.name = "Arial"
-                run.font.size = Pt(10)
+                voetnoten.add_run(f"{_voetnoot}\n")
 
         document.add_page_break()
 
