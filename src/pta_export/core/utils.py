@@ -52,6 +52,10 @@ def get_se_weging(
     if leerjaar in YEAR_4:
         return None
 
+    # nothing to display for 2020!
+    if leerjaar == Leerjaren.vwo_6:
+        return None
+
     toets_this_year = vak.toets_set.filter(jaar=year, klas=leerjaar).first()
     if not toets_this_year:
         return None
