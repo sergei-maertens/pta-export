@@ -1,5 +1,6 @@
 import html
 import logging
+from dataclasses import dataclass
 from typing import Dict, Iterable, List, Optional, Tuple
 
 from django.contrib.staticfiles.storage import staticfiles_storage
@@ -55,6 +56,25 @@ COLUMN_WIDTHS = {
 }
 
 HEADER_BG_COLOR = "D9D9D9"
+
+
+@dataclass
+class Omschrijving:
+    content: str
+    inleverdatum: str
+    voetnoot: str
+
+    _voetnoot_counter = 0
+    voetnoot_nr = 0
+
+    def __post_init__(self):
+        if self.voetnoot:
+            self.__class__._voetnoot_counter += 1
+            self.voetnoot_nr = self.__class__._voetnoot_counter
+
+    @classmethod
+    def reset_counter(cls):
+        cls._voetnoot_counter = 0
 
 
 def export(year: int, leerjaar: int) -> Document:
@@ -113,7 +133,9 @@ def get_toets_table(
 
         row = [
             toets.code,
-            (omschrijving, inleverdatum),
+            Omschrijving(
+                content=omschrijving, inleverdatum=inleverdatum, voetnoot=toets.voetnoot
+            ),
             toets.domein or "",
             periode or "",
             week,
@@ -168,7 +190,7 @@ def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Documen
 
         vak_naam = capfirst(html.unescape(vak.naam))
         header_run = header_p.add_run(f"PTA\t{vak_naam}\t{_leerjaar}\t{school_year}")
-        header_run.font.name = "Arial"
+        # header_run.font.name = "Arial"
         header_run.font.size = Pt(14)
         header_run.bold = True
 
@@ -177,6 +199,10 @@ def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Documen
         paragraph.alignment = WD_ALIGN_PARAGRAPH.RIGHT
         paragraph.add_run().add_picture(logo_path, width=Cm(5.68))
 
+        # try to set global font name
+        paragraph.style.font.name = "Arial"
+
+        Omschrijving.reset_counter()
         [header, *rows] = get_toets_table(
             leerjaar, vak, toetsweek_periodes, toetsweken, weging
         )
@@ -189,8 +215,10 @@ def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Documen
         for index, title in enumerate(header):
             cell = header_cells[index]
             cell.text = title
-            _make_bold(cell)
+            cell.paragraphs[0].runs[0].bold = True
             _set_cell_bg(cell)
+
+        toets_content = []
 
         for index, row in enumerate(rows, 1):
             row_cells = table.rows[index].cells
@@ -200,33 +228,34 @@ def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Documen
                 cell = row_cells[_index]
                 cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
 
-                if isinstance(content, tuple):
-                    content, extra = content
-                else:
-                    extra = ""
-
+                # cell styling
                 par = cell.paragraphs[0]
+                par.style.font.size = Pt(10)
                 if center:
                     par.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
-                run = par.add_run(text=str(content))
-                run.font.name = "Arial"
-                run.font.size = Pt(10)
+                # normal content
+                if not isinstance(content, Omschrijving):
+                    par.text = str(content)
+                # calculated content
+                else:
+                    toets_content.append(content)
+                    par.add_run(text=content.content)
+
+                    if content.voetnoot:
+                        par.add_run(text=" ")
+                        voetnoot_run = par.add_run(text=f"{content.voetnoot_nr})")
+                        voetnoot_run.font.superscript = True
+
+                    if content.inleverdatum:
+                        datum_par = cell.add_paragraph(text=content.inleverdatum)
+                        datum_par.runs[0].font.size = Pt(9)
+                        datum_par.runs[0].italic = True
+
+                # make first column bold
                 if _index == 0:
-                    run.bold = True
-
-                if extra:
-                    extra_par = cell.add_paragraph()
-                    extra_run = extra_par.add_run(text=f"{extra}")
-                    extra_run.font.name = "Arial"
-                    extra_run.font.size = Pt(9)
-                    extra_run.italic = True
-
-        # style the cells: widths, font
-        for row in table.rows:
-            for index, cell in enumerate(row.cells):
-                center = index != 1
-                _style_cell(cell, center=center)
+                    for run in par.runs:
+                        run.bold = True
 
         # set the column widths
         num_extra_columns = len(table.columns) - len(COLUMN_WIDTHS)
@@ -253,7 +282,7 @@ def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Documen
             se_weging = get_simple_weging(vak)
             if se_weging:
                 weging_label = SIMPLE_WEGING[leerjaar]
-                weging_text = f"*\tHet {weging_label} cijfer telt {se_weging} mee in het schoolexamencijfer"
+                weging_text = f"* Het {weging_label} cijfer telt {se_weging} mee in het schoolexamencijfer"
         else:
             # add note for se_weging
             se_weging = get_se_weging(year, leerjaar, vak)
@@ -272,44 +301,32 @@ def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Documen
         if weging_text:
             p_weging = document.add_paragraph(weging_text)
             p_weging.paragraph_format.space_before = Pt(10)
-            p_weging.style.font.name = "Arial"
-            p_weging.style.font.size = Pt(10)
+            p_weging.runs[0].font.size = Pt(10)
+
+        toets_voetnoot_content = [x for x in toets_content if x.voetnoot]
+        if toets_voetnoot_content:
+            p_toets_voetnoten = document.add_paragraph()
+            p_toets_voetnoten.paragraph_format.space_before = Pt(10)
+            for content in toets_voetnoot_content:
+                run_super = p_toets_voetnoten.add_run(text=f"{content.voetnoot_nr})")
+                run_super.font.superscript = True
+                p_toets_voetnoten.add_run(
+                    text=f" {normalize_newlines(content.voetnoot)}\n"
+                )
 
         vak_voetnoten = [voetnoot.noot for voetnoot in vak.voetnoten]
-        toets_voetnoten = [toets.voetnoot for toets in vak.toetsen if toets.voetnoot]
-        all_voetnoten = vak_voetnoten + toets_voetnoten
-
-        if all_voetnoten:
+        if vak_voetnoten:
             voetnoten = document.add_paragraph("opmerking\n")
             voetnoten.runs[0].bold = True
             voetnoten.paragraph_format.space_before = Pt(10)
-            voetnoten.style.font.bold = False
-            voetnoten.style.font.name = "Arial"
-            voetnoten.style.font.size = Pt(10)
 
-            for voetnoot in all_voetnoten:
+            for voetnoot in vak_voetnoten:
                 _voetnoot = normalize_newlines(voetnoot)
                 voetnoten.add_run(f"{_voetnoot}\n")
 
         document.add_page_break()
 
     return document
-
-
-def _make_bold(cell):
-    cell.paragraphs[0].runs[0].bold = True
-
-
-def _style_cell(cell, center=True):
-    cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
-
-    for paragraph in cell.paragraphs:
-        if center:
-            paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
-
-        for run in paragraph.runs:
-            run.font.name = "Arial"
-            run.font.size = Pt(10)
 
 
 def _set_cell_bg(cell, color: str = HEADER_BG_COLOR):
