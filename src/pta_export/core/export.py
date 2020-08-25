@@ -296,7 +296,7 @@ def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Documen
                     bits.append(f"{numerator}x {label}")
 
                 _weging = f"({' + '.join(bits)}) / {denumerator}"
-                weging_text = f"Weging eindcijfer: {_weging}"
+                weging_text = f"berekening SE cijfer: {_weging}"
 
         if weging_text:
             p_weging = document.add_paragraph(weging_text)

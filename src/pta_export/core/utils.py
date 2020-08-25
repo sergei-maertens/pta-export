@@ -107,6 +107,9 @@ def get_se_weging(
     numerator_5 /= gcd
     numerator_6 /= gcd  # either zero or used as input for the gcd derivation
 
+    if denumerator == 1:
+        return None
+
     return (
         int(denumerator),
         int(numerator_4),
