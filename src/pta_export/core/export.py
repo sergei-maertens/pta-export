@@ -126,8 +126,11 @@ def get_toets_table(
         omschrijving = html.unescape(normalize_newlines(toets.omschrijving).strip())
 
         if toets.inleverdatum:
-            formatted = format_date(toets.inleverdatum, "d F Y")
+            formatted = format_date(toets.inleverdatum, "j F Y")
             inleverdatum = f"inleverdatum: {formatted}"
+        elif toets.datum:
+            formatted = format_date(toets.datum, "j F Y")
+            inleverdatum = f"datum: {formatted}"
         else:
             inleverdatum = ""
 
@@ -139,7 +142,7 @@ def get_toets_table(
             toets.domein or "",
             periode or "",
             week,
-            toets.soortwerk.naam,
+            toets.soortwerk.naam if toets.soortwerk.id != 12 else "",
             toets.tijd or "",
         ]
 
@@ -189,6 +192,9 @@ def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Documen
         header_tab_stops.add_tab_stop(Cm(17.25))
 
         vak_naam = capfirst(html.unescape(vak.naam))
+        if vak.afkorting and vak.weergeven == 1:
+            vak_naam = f"{vak_naam} ({vak.afkorting})"
+
         header_run = header_p.add_run(f"PTA\t{vak_naam}\t{_leerjaar}\t{school_year}")
         # header_run.font.name = "Arial"
         header_run.font.size = Pt(14)

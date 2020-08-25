@@ -117,7 +117,7 @@ class Toets(models.Model):
     week = models.IntegerField(db_column="OCT_Week", blank=True, null=True)
     lesweek = models.IntegerField(db_column="OCT_Lesweek", blank=True, null=True)
     inleverdatum = IntegerDateField(db_column="OCT_InleverDatum", blank=True, null=True)
-    datum = models.IntegerField(db_column="OCT_Datum", blank=True, null=True)
+    datum = IntegerDateField(db_column="OCT_Datum", blank=True, null=True)
     periode = models.IntegerField(db_column="OCT_Periode", blank=True, null=True)
     soortwerk = models.ForeignKey(
         "Werk",
