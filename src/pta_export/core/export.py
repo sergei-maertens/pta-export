@@ -210,7 +210,7 @@ def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Documen
         # add the logo
         paragraph = document.add_paragraph()
         paragraph.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-        paragraph.add_run().add_picture(logo_path, width=Cm(5.68))
+        # paragraph.add_run().add_picture(logo_path, width=Cm(5.68))
 
         # try to set global font name
         paragraph.style.font.name = "Arial"
