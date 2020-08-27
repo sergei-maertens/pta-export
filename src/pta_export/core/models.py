@@ -74,13 +74,23 @@ class Overstap(models.Model):
     klas = models.IntegerField(
         db_column="OCO_Klas", choices=Leerjaren.choices, blank=True, null=True,
     )
-    vak = models.IntegerField(db_column="OCO_Vak", blank=True, null=True)
+    vak = models.ForeignKey(
+        "Vak", db_column="OCO_Vak", blank=True, null=True, on_delete=models.SET_NULL
+    )
     cohort = models.CharField(
         db_column="OCO_Cohort", max_length=15, blank=True, null=True
     )
-    user = models.IntegerField(db_column="OCO_User", blank=True, null=True)
+    user = models.ForeignKey(
+        "User", db_column="OCO_User", blank=True, null=True, on_delete=models.SET_NULL
+    )
     weging_ed4 = models.IntegerField(db_column="OCO_Weging_ED4", blank=True, null=True)
-    oudetoets = models.IntegerField(db_column="OCO_Oudetoets", blank=True, null=True)
+    oude_toets = models.ForeignKey(
+        "Toets",
+        db_column="OCO_Oudetoets",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
     actie = models.IntegerField(db_column="OCO_Actie", blank=True, null=True)
 
     class Meta:

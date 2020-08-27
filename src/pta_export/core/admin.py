@@ -12,7 +12,18 @@ class KalenderAdmin(admin.ModelAdmin):
 
 @admin.register(Overstap)
 class OverstapAdmin(admin.ModelAdmin):
-    pass
+    list_display = (
+        "jaar",
+        "klas",
+        "cohort",
+        "vak",
+        "weging_ed4",
+        "oude_toets",
+        "actie",
+    )
+    list_filter = ("jaar", "vak", "klas")
+    list_select_related = ("vak", "oude_toets")
+    raw_id_fields = ("oude_toets",)
 
 
 @admin.register(Toets)
