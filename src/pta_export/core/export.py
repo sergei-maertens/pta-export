@@ -79,7 +79,11 @@ class Omschrijving:
 
 def export(year: int, leerjaar: int) -> Document:
     translation.activate("nl_NL")
-    toetsen = Toets.objects.filter(jaar=year, klas=leerjaar).order_by("lesweek")
+    toetsen = (
+        Toets.objects.select_related("soortwerk")
+        .filter(jaar=year, klas=leerjaar)
+        .order_by("lesweek")
+    )
     voetnoten = Voetnoot.objects.order_by("id")
     vakken = Vak.objects.prefetch_related(
         Prefetch("toets_set", queryset=toetsen, to_attr="toetsen"),
@@ -134,6 +138,9 @@ def get_toets_table(
         else:
             inleverdatum = ""
 
+        soort_werk = (
+            toets.soortwerk.naam if toets.soortwerk and toets.soortwerk.id != 12 else ""
+        )
         row = [
             toets.code,
             Omschrijving(
@@ -142,7 +149,7 @@ def get_toets_table(
             toets.domein or "",
             periode or "",
             week,
-            toets.soortwerk.naam if toets.soortwerk.id != 12 else "",
+            soort_werk,
             toets.tijd or "",
         ]
 
@@ -272,7 +279,9 @@ def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Documen
             - sum(COLUMN_WIDTHS.values())
             - Mm(1)
         )
-        extra_column_width = int(remaining_width / num_extra_columns)
+        extra_column_width = (
+            int(remaining_width / num_extra_columns) if num_extra_columns else 0
+        )
         for index, column in enumerate(table.columns):
             column.width = COLUMN_WIDTHS.get(index, extra_column_width)
             # sigh... dumb format

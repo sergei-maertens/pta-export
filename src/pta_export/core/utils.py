@@ -11,6 +11,8 @@ YEAR_6 = (Leerjaren.vwo_6,)
 HAVO = (Leerjaren.havo_4, Leerjaren.havo_5)
 VWO = (Leerjaren.vwo_4, Leerjaren.vwo_5, Leerjaren.vwo_6)
 
+OVERSTAPPERS = (Leerjaren.overstappers_vwo_5, Leerjaren.overstappers_vwo_6)
+
 
 def get_previous_leerjaar(leerjaar: int) -> int:
     # determine the previous leerjaar
@@ -50,6 +52,9 @@ def get_se_weging(
 
     # year 4 -> 100% ED4, nothing to calculate
     if leerjaar in YEAR_4:
+        return None
+
+    if leerjaar in OVERSTAPPERS:
         return None
 
     # nothing to display for 2020!
