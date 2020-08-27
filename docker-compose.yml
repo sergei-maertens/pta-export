@@ -27,7 +27,7 @@ services:
       OCPTA_DB_PASSWORD: ${OCPTA_DB_PASSWORD:-pta_export}
       OCPTA_DB_HOST: ${OCPTA_DB_HOST:-db}
 
-      SENTRY_DSN: ${SENTRY_DSN:-}
+      SENTRY_DSN: ${SENTRY_DSN}
     ports:
       - ${WEB_PORT:-8000}:8000
     depends_on:

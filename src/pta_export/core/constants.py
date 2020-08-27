@@ -72,3 +72,9 @@ class Breuken(models.IntegerChoices):
     five_twelfths = 10, "5/12"
     saven_twelfths = 11, "7/12"
     eleven_twelfths = 12, "11/12"
+
+
+class OverstapActies(models.IntegerChoices):
+    overnemen = 1, "overnemen"
+    herwaarderen = 2, "herwaarderen"
+    inhalen = 3, "inhalen"

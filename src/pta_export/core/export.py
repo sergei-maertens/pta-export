@@ -8,8 +8,9 @@ from django.utils import translation
 
 from docx import Document
 
+from .constants import OverstapActies
 from .document import initialize_document, add_vak
-from .models import Kalender, Toets, Vak, Voetnoot
+from .models import Kalender, Toets, Vak, Voetnoot, Overstap
 
 logger = logging.getLogger(__name__)
 
@@ -22,9 +23,25 @@ def export(year: int, leerjaar: int) -> Document:
         .order_by("lesweek")
     )
     voetnoten = Voetnoot.objects.order_by("id")
+    overstappen = (
+        Overstap.objects
+        .filter(jaar=year, klas=leerjaar)
+        .select_related("oude_toets")
+    )
     vakken = Vak.objects.prefetch_related(
         Prefetch("toets_set", queryset=toetsen, to_attr="toetsen"),
         Prefetch("voetnoot_set", queryset=voetnoten, to_attr="voetnoten"),
+        Prefetch(
+            "overstap_set",
+            queryset=(
+                overstappen
+                .filter(actie__in=(
+                    OverstapActies.overnemen, OverstapActies.herwaarderen
+                ))
+                .order_by("oude_toets__lesweek", "oude_toets__code")
+            ),
+            to_attr="overnemen_herwaarderen",
+        )
     ).order_by(Lower("naam"))
     doc = create_document(year, leerjaar, vakken)
     translation.deactivate()

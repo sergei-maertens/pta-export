@@ -80,6 +80,8 @@ def add_vak(
 ):
     if leerjaar not in (Leerjaren.overstappers_vwo_5, Leerjaren.overstappers_vwo_6):
         add_vak_regular(document, logo_path, vak, year, leerjaar, toetsweek_periodes)
+    elif leerjaar == Leerjaren.overstappers_vwo_5:
+        add_vak_overstappers_vwo5(document, logo_path, vak, year, leerjaar)
 
 
 @dataclass
@@ -99,6 +101,10 @@ class Omschrijving:
     @classmethod
     def reset_counter(cls):
         cls._voetnoot_counter = 0
+
+
+def clean_text(text: str) -> str:
+    return html.unescape(normalize_newlines(text).strip())
 
 
 def get_toets_table(
@@ -134,8 +140,6 @@ def get_toets_table(
             periode = f"{periode} (tw)"
             week = "/".join([str(wk) for wk in toetsweek_periodes[toets.periode]])
 
-        omschrijving = html.unescape(normalize_newlines(toets.omschrijving).strip())
-
         if toets.inleverdatum:
             formatted = format_date(toets.inleverdatum, "j F Y")
             inleverdatum = f"inleverdatum: {formatted}"
@@ -151,7 +155,9 @@ def get_toets_table(
         row = [
             toets.code,
             Omschrijving(
-                content=omschrijving, inleverdatum=inleverdatum, voetnoot=toets.voetnoot
+                content=clean_text(toets.omschrijving),
+                inleverdatum=inleverdatum,
+                voetnoot=toets.voetnoot,
             ),
             toets.domein or "",
             periode or "",
@@ -172,21 +178,7 @@ def get_toets_table(
     return [header] + rows
 
 
-def add_vak_regular(
-    document: Document,
-    logo_path: str,
-    vak: Vak,
-    year: int,
-    leerjaar: int,
-    toetsweek_periodes: Dict[int, List[int]],
-):
-    if not vak.toetsen:
-        return
-
-    section = document.sections[-1]
-
-    toetsweken = sum(toetsweek_periodes.values(), [])
-    weging = LEERJAAR_WEGING.get(leerjaar)
+def add_header(document: Document, vak: Vak, year: int, leerjaar: int):
     _leerjaar = Leerjaren.labels[leerjaar]
     school_year = f"{year}-{year + 1}"
 
@@ -205,6 +197,25 @@ def add_vak_regular(
     # header_run.font.name = "Arial"
     header_run.font.size = Pt(14)
     header_run.bold = True
+
+
+def add_vak_regular(
+    document: Document,
+    logo_path: str,
+    vak: Vak,
+    year: int,
+    leerjaar: int,
+    toetsweek_periodes: Dict[int, List[int]],
+):
+    if not vak.toetsen:
+        return
+
+    section = document.sections[-1]
+
+    toetsweken = sum(toetsweek_periodes.values(), [])
+    weging = LEERJAAR_WEGING.get(leerjaar)
+
+    add_header(document, vak, year, leerjaar)
 
     # add the logo
     paragraph = document.add_paragraph()
@@ -338,6 +349,96 @@ def add_vak_regular(
         for voetnoot in vak_voetnoten:
             _voetnoot = normalize_newlines(voetnoot)
             voetnoten.add_run(f"{_voetnoot}\n")
+
+    document.add_page_break()
+
+
+def add_vak_overstappers_vwo5(
+    document: Document,
+    logo_path: str,
+    vak: Vak,
+    year: int,
+    leerjaar: int,
+):
+    # overstappen/herwaarderen table
+    # if not vak.overnemen_herwaarderen:
+    #     return
+
+    add_header(document, vak, year, leerjaar)
+
+    if vak.overnemen_herwaarderen:
+
+        paragraph = document.add_paragraph(
+            "De volgende al gemaakte onderdelen worden meegenomen uit eerdere leerjaren.\n"
+            "Daarbij wordt het cijfer overgenomen, of de toets wordt opnieuw gewaardeerd."
+        )
+        # try to set global font name
+        paragraph.style.font.name = "Arial"
+        paragraph.style.font.size = Pt(10)
+
+        table = document.add_table(rows=len(vak.overnemen_herwaarderen) + 1, cols=6)
+        table.style = "TableGrid"
+        table.autofit = False
+
+        # add table header
+        header = [
+            "Code V4/V5",
+            "Jaar",
+            "Omschrijving",
+            "Domein",
+            "Overnemen/Herwaarderen",
+            "Weging ED4"
+        ]
+        header_cells = table.rows[0].cells
+        for index, title in enumerate(header):
+            cell = header_cells[index]
+            cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
+            cell.text = title
+            cell.paragraphs[0].runs[0].bold = True
+            cell.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+            _set_cell_bg(cell)
+
+        # add table body
+        for index, overstap in enumerate(vak.overnemen_herwaarderen, 1):
+            jaar = f"{overstap.oude_toets.jaar}-{overstap.oude_toets.jaar + 1}"
+
+            row_cells = table.rows[index].cells
+            row_cells[0].text = overstap.oude_toets.code
+            row_cells[1].text = jaar
+            row_cells[2].text = clean_text(overstap.oude_toets.omschrijving)
+            row_cells[3].text = overstap.oude_toets.domein
+            row_cells[4].text = overstap.get_actie_display()
+            row_cells[5].text = str(overstap.weging_ed4)
+
+            # style the cells
+            for _index, cell in enumerate(row_cells):
+                cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
+                # cell styling
+                par = cell.paragraphs[0]
+                if _index != 2:
+                    par.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                if _index == 0:
+                    for run in par.runs:
+                        run.font.bold = True
+
+        # style table dimensions
+        WIDTHS = {
+            0: Cm(2.00),
+            1: Cm(2.50),
+            2: Cm(10.43),
+            3: Cm(3.25),
+            4: Cm(3.00),
+            5: Cm(2.00),
+        }
+        for index, column in enumerate(table.columns):
+            column.width = WIDTHS[index]
+            # sigh... dumb format
+            for cell in column.cells:
+                cell.width = column.width
+
+        for row in table.rows:
+            row.height_rule = WD_ROW_HEIGHT_RULE.AT_LEAST
+            row.height = Cm(0.7)
 
     document.add_page_break()
 
