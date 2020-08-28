@@ -78,3 +78,4 @@ class OverstapActies(models.IntegerChoices):
     overnemen = 1, "overnemen"
     herwaarderen = 2, "herwaarderen"
     inhalen = 3, "inhalen"
+    meemaken = 4, "meemaken met H5"

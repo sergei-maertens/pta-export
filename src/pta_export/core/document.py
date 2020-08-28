@@ -76,11 +76,13 @@ def add_vak(
     year: int,
     leerjaar: int,
     toetsweek_periodes: Dict[int, List[int]],
-):
+) -> None:
     if leerjaar not in (Leerjaren.overstappers_vwo_5, Leerjaren.overstappers_vwo_6):
         add_vak_regular(document, logo_path, vak, year, leerjaar, toetsweek_periodes)
     elif leerjaar == Leerjaren.overstappers_vwo_5:
         add_vak_overstappers_vwo5(document, logo_path, vak, year, leerjaar)
+    elif leerjaar == Leerjaren.overstappers_vwo_6:
+        add_vak_overstappers_vwo6(document, logo_path, vak, year, leerjaar)
 
 
 @dataclass
@@ -470,6 +472,74 @@ def add_vak_overstappers_vwo5(
         _set_column_widths(table, WIDTHS)
 
     document.add_page_break()
+
+
+def add_vak_overstappers_vwo6(
+    document: Document, logo_path: str, vak: Vak, year: int, leerjaar: int,
+) -> None:
+    if not vak.overstappen_vwo6:
+        return
+
+    add_header(document, vak, year, leerjaar)
+
+    paragraph = document.add_paragraph(
+        "De volgende al gemaakte onderdelen worden meegenomen uit eerdere leerjaren.\n"
+        "Daarbij wordt het cijfer overgenomen, of de toets wordt opnieuw gewaardeerd.\n"
+        "Toetsen van periode 3 worden meegemaakt met de Havo 5 klas."
+    )
+    # try to set global font name
+    _set_default_font(paragraph)
+
+    table_data = [
+        [
+            overstap.oude_toets.code,
+            "???",
+            clean_text(overstap.oude_toets.omschrijving),
+            overstap.oude_toets.domein,
+            overstap.get_actie_display(),
+        ]
+        for overstap in vak.overstappen_vwo6
+        if overstap.oude_toets
+    ]
+
+    header = [
+        "Code H5",
+        "Oude toets",
+        "Omschrijving",
+        "Domein",
+        "Actie",
+    ]
+    WIDTHS = {
+        0: Cm(2.00),
+        1: Cm(2.50),
+        2: Cm(10.43),
+        3: Cm(3.25),
+        4: Cm(3.00),
+    }
+    create_table(document, header, table_data, index_no_center=2, widths=WIDTHS)
+
+    document.add_page_break()
+
+
+def create_table(
+    document, header, table_data, widths: Dict[int, Cm], index_no_center: int = 1
+):
+    table = document.add_table(rows=len(table_data) + 1, cols=len(header))
+    _set_default_table_style(table)
+
+    # add table header
+    _set_table_header(table, header)
+
+    # add table body
+    for row_index, data_row in enumerate(table_data, 1):
+        for column_index, content in enumerate(data_row):
+            cell = table.cell(row_index, column_index)
+            cell.text = content
+
+    _style_table_cells(table, index_no_center=index_no_center)
+    _set_column_widths(table, widths)
+
+    return table
 
 
 def _set_default_font(paragraph) -> None:
