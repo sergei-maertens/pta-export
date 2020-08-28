@@ -223,7 +223,7 @@ def add_vak_regular(
     # paragraph.add_run().add_picture(logo_path, width=Cm(5.68))
 
     # try to set global font name
-    paragraph.style.font.name = "Arial"
+    _set_default_font(paragraph)
 
     Omschrijving.reset_counter()
     [header, *rows] = get_toets_table(
@@ -231,13 +231,11 @@ def add_vak_regular(
     )
 
     table = document.add_table(rows=len(rows) + 1, cols=len(header))
-    table.style = "TableGrid"
-    table.autofit = False
+    _set_default_table_style(table)
 
     header_cells = table.rows[0].cells
     for index, title in enumerate(header):
         cell = header_cells[index]
-        cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
         cell.text = title
         cell.paragraphs[0].runs[0].bold = True
         _set_cell_bg(cell)
@@ -247,16 +245,8 @@ def add_vak_regular(
     for index, row in enumerate(rows, 1):
         row_cells = table.rows[index].cells
         for _index, content in enumerate(row):
-            center = _index != 1
-
             cell = row_cells[_index]
-            cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
-
-            # cell styling
             par = cell.paragraphs[0]
-            par.style.font.size = Pt(10)
-            if center:
-                par.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
             # normal content
             if not isinstance(content, Omschrijving):
@@ -275,11 +265,7 @@ def add_vak_regular(
                     datum_par = cell.add_paragraph(text=content.inleverdatum)
                     datum_par.runs[0].font.size = Pt(9)
                     datum_par.runs[0].italic = True
-
-            # make first column bold
-            if _index == 0:
-                for run in par.runs:
-                    run.bold = True
+    _style_table_cells(table)
 
     # set the column widths
     num_extra_columns = len(table.columns) - len(COLUMN_WIDTHS)
@@ -299,16 +285,15 @@ def add_vak_regular(
         for cell in column.cells:
             cell.width = column.width
 
-    for row in table.rows:
-        row.height_rule = WD_ROW_HEIGHT_RULE.AT_LEAST
-        row.height = Cm(0.7)
-
     weging_text = None
     if leerjaar in SIMPLE_WEGING:
         se_weging = get_simple_weging(vak)
         if se_weging:
             weging_label = SIMPLE_WEGING[leerjaar]
-            weging_text = f"* Het {weging_label} cijfer telt {se_weging} mee in het schoolexamencijfer"
+            weging_text = (
+                f"* Het {weging_label} cijfer telt {se_weging} mee "
+                "in het schoolexamencijfer"
+            )
     else:
         # add note for se_weging
         se_weging = get_se_weging(year, leerjaar, vak)
@@ -369,16 +354,15 @@ def add_vak_overstappers_vwo5(
     if vak.overnemen_herwaarderen:
 
         paragraph = document.add_paragraph(
-            "De volgende al gemaakte onderdelen worden meegenomen uit eerdere leerjaren.\n"
-            "Daarbij wordt het cijfer overgenomen, of de toets wordt opnieuw gewaardeerd."
+            "De volgende al gemaakte onderdelen worden meegenomen uit "
+            "eerdere leerjaren.\nDaarbij wordt het cijfer overgenomen, of de "
+            "toets wordt opnieuw gewaardeerd."
         )
         # try to set global font name
-        paragraph.style.font.name = "Arial"
-        paragraph.style.font.size = Pt(10)
+        _set_default_font(paragraph)
 
         table = document.add_table(rows=len(vak.overnemen_herwaarderen) + 1, cols=6)
-        table.style = "TableGrid"
-        table.autofit = False
+        _set_default_table_style(table)
 
         # add table header
         header = [
@@ -389,14 +373,7 @@ def add_vak_overstappers_vwo5(
             "Overnemen/Herwaarderen",
             "Weging ED4"
         ]
-        header_cells = table.rows[0].cells
-        for index, title in enumerate(header):
-            cell = header_cells[index]
-            cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
-            cell.text = title
-            cell.paragraphs[0].runs[0].bold = True
-            cell.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
-            _set_cell_bg(cell)
+        _set_table_header(table, header)
 
         # add table body
         for index, overstap in enumerate(vak.overnemen_herwaarderen, 1):
@@ -409,17 +386,7 @@ def add_vak_overstappers_vwo5(
             row_cells[3].text = overstap.oude_toets.domein
             row_cells[4].text = overstap.get_actie_display()
             row_cells[5].text = str(overstap.weging_ed4)
-
-            # style the cells
-            for _index, cell in enumerate(row_cells):
-                cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
-                # cell styling
-                par = cell.paragraphs[0]
-                if _index != 2:
-                    par.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                if _index == 0:
-                    for run in par.runs:
-                        run.font.bold = True
+        _style_table_cells(table, index_no_center=2)
 
         # style table dimensions
         WIDTHS = {
@@ -430,17 +397,112 @@ def add_vak_overstappers_vwo5(
             4: Cm(3.00),
             5: Cm(2.00),
         }
-        for index, column in enumerate(table.columns):
-            column.width = WIDTHS[index]
-            # sigh... dumb format
-            for cell in column.cells:
-                cell.width = column.width
+        _set_column_widths(table, WIDTHS)
 
-        for row in table.rows:
-            row.height_rule = WD_ROW_HEIGHT_RULE.AT_LEAST
-            row.height = Cm(0.7)
+    if vak.inhalen:
+        paragraph = document.add_paragraph(
+            "De volgende toetsen uit havo 4 moeten worden ingehaald."
+        )
+        # try to set global font name
+        _set_default_font(paragraph)
+        if vak.overnemen_herwaarderen:
+            paragraph.paragraph_format.space_before = Pt(10)
+
+        table = document.add_table(rows=len(vak.inhalen) + 1, cols=5)
+        _set_default_table_style(table)
+
+        # add table header
+        header = [
+            "Code H4",
+            "Jaar",
+            "Omschrijving",
+            "Domein",
+            "Weging ED4"
+        ]
+        _set_table_header(table, header)
+
+        # add table body
+        for index, overstap in enumerate(vak.inhalen, 1):
+            jaar = f"{overstap.oude_toets.jaar}-{overstap.oude_toets.jaar + 1}"
+
+            row_cells = table.rows[index].cells
+            row_cells[0].text = overstap.oude_toets.code
+            row_cells[1].text = jaar
+            row_cells[2].text = clean_text(overstap.oude_toets.omschrijving)
+            row_cells[3].text = overstap.oude_toets.domein
+            row_cells[4].text = str(overstap.weging_ed4)
+        _style_table_cells(table, index_no_center=2)
+
+        # style table dimensions
+        WIDTHS = {
+            0: Cm(2.00),
+            1: Cm(2.50),
+            2: Cm(10.43),
+            3: Cm(3.25),
+            4: Cm(2.00),
+        }
+        _set_column_widths(table, WIDTHS)
 
     document.add_page_break()
+
+
+def _set_default_font(paragraph) -> None:
+    paragraph.style.font.name = "Arial"
+    paragraph.style.font.size = Pt(10)
+
+
+def _set_default_table_style(table) -> None:
+    table.style = "TableGrid"
+    table.autofit = False
+
+    for row in table.rows:
+        row.height_rule = WD_ROW_HEIGHT_RULE.AT_LEAST
+        row.height = Cm(0.7)
+
+        for cell in row.cells:
+            cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
+
+
+def _style_table_cells(table, index_no_center=1):
+    # style header row
+    _set_table_header_style(table.rows[0], index_no_center=index_no_center)
+
+    # style body
+    for row in table.rows:
+        # style the cells
+        for _index, cell in enumerate(row.cells):
+            par = cell.paragraphs[0]
+            # first column bold
+            if _index == 0:
+                for run in par.runs:
+                    run.font.bold = True
+            # center if needed
+            if _index != index_no_center:
+                for par in cell.paragraphs:
+                    par.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+
+def _set_table_header(table, header: List[str]) -> None:
+    header_cells = table.rows[0].cells
+    for index, title in enumerate(header):
+        cell = header_cells[index]
+        cell.text = title
+
+
+def _set_table_header_style(header_row, index_no_center=1) -> None:
+    for index, cell in enumerate(header_row.cells):
+        cell.paragraphs[0].runs[0].bold = True
+        if index != index_no_center:
+            cell.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+        _set_cell_bg(cell)
+
+
+def _set_column_widths(table, widths) -> None:
+    for index, column in enumerate(table.columns):
+        column.width = widths[index]
+        # sigh... dumb format
+        for cell in column.cells:
+            cell.width = column.width
 
 
 def _set_cell_bg(cell, color: str = HEADER_BG_COLOR):

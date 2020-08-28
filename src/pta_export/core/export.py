@@ -27,6 +27,7 @@ def export(year: int, leerjaar: int) -> Document:
         Overstap.objects
         .filter(jaar=year, klas=leerjaar)
         .select_related("oude_toets")
+        .order_by("oude_toets__klas", "oude_toets__code")
     )
     vakken = Vak.objects.prefetch_related(
         Prefetch("toets_set", queryset=toetsen, to_attr="toetsen"),
@@ -38,10 +39,17 @@ def export(year: int, leerjaar: int) -> Document:
                 .filter(actie__in=(
                     OverstapActies.overnemen, OverstapActies.herwaarderen
                 ))
-                .order_by("oude_toets__klas", "oude_toets__code")
             ),
             to_attr="overnemen_herwaarderen",
-        )
+        ),
+        Prefetch(
+            "overstap_set",
+            queryset=overstappen.filter(
+                actie=OverstapActies.inhalen,
+                oude_toets__isnull=False
+            ),
+            to_attr="inhalen",
+        ),
     ).order_by(Lower("naam"))
     doc = create_document(year, leerjaar, vakken)
     translation.deactivate()
