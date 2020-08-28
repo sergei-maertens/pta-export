@@ -9,8 +9,8 @@ from django.utils import translation
 from docx import Document
 
 from .constants import OverstapActies
-from .document import initialize_document, add_vak
-from .models import Kalender, Toets, Vak, Voetnoot, Overstap
+from .document import add_vak, initialize_document
+from .models import Kalender, Overstap, Toets, Vak, Voetnoot
 
 logger = logging.getLogger(__name__)
 
@@ -24,8 +24,7 @@ def export(year: int, leerjaar: int) -> Document:
     )
     voetnoten = Voetnoot.objects.order_by("id")
     overstappen = (
-        Overstap.objects
-        .filter(jaar=year, klas=leerjaar)
+        Overstap.objects.filter(jaar=year, klas=leerjaar)
         .select_related("oude_toets")
         .order_by("oude_toets__klas", "oude_toets__code")
     )
@@ -35,25 +34,21 @@ def export(year: int, leerjaar: int) -> Document:
         Prefetch(
             "overstap_set",
             queryset=(
-                overstappen
-                .filter(actie__in=(
-                    OverstapActies.overnemen, OverstapActies.herwaarderen
-                ))
+                overstappen.filter(
+                    actie__in=(OverstapActies.overnemen, OverstapActies.herwaarderen)
+                )
             ),
             to_attr="overnemen_herwaarderen",
         ),
         Prefetch(
             "overstap_set",
             queryset=overstappen.filter(
-                actie=OverstapActies.inhalen,
-                oude_toets__isnull=False
+                actie=OverstapActies.inhalen, oude_toets__isnull=False
             ),
             to_attr="inhalen",
         ),
         Prefetch(
-            "toets_set",
-            queryset=toetsen.filter(type=8),
-            to_attr="inhaalopdrachten",
+            "toets_set", queryset=toetsen.filter(type=8), to_attr="inhaalopdrachten",
         ),
     ).order_by(Lower("naam"))
     doc = create_document(year, leerjaar, vakken)

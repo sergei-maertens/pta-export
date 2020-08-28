@@ -17,7 +17,6 @@ from .constants import Leerjaren
 from .models import Vak
 from .utils import get_se_weging, get_simple_weging
 
-
 LEERJAAR_WEGING = {
     Leerjaren.havo_4: ("Weging ED4", "weging_ed4"),
     Leerjaren.vwo_4: ("Weging ED4", "weging_ed4"),
@@ -321,9 +320,7 @@ def add_vak_regular(
         for content in toets_voetnoot_content:
             run_super = p_toets_voetnoten.add_run(text=f"{content.voetnoot_nr})")
             run_super.font.superscript = True
-            p_toets_voetnoten.add_run(
-                text=f" {normalize_newlines(content.voetnoot)}\n"
-            )
+            p_toets_voetnoten.add_run(text=f" {normalize_newlines(content.voetnoot)}\n")
 
     vak_voetnoten = [voetnoot.noot for voetnoot in vak.voetnoten]
     if vak_voetnoten:
@@ -339,17 +336,9 @@ def add_vak_regular(
 
 
 def add_vak_overstappers_vwo5(
-    document: Document,
-    logo_path: str,
-    vak: Vak,
-    year: int,
-    leerjaar: int,
+    document: Document, logo_path: str, vak: Vak, year: int, leerjaar: int,
 ):
-    render_vak = any((
-        vak.overnemen_herwaarderen,
-        vak.inhalen,
-        vak.inhaalopdrachten,
-    ))
+    render_vak = any((vak.overnemen_herwaarderen, vak.inhalen, vak.inhaalopdrachten,))
     if not render_vak:
         return
 
@@ -375,7 +364,7 @@ def add_vak_overstappers_vwo5(
             "Omschrijving",
             "Domein",
             "Overnemen/Herwaarderen",
-            "Weging ED4"
+            "Weging ED4",
         ]
         _set_table_header(table, header)
 
@@ -416,13 +405,7 @@ def add_vak_overstappers_vwo5(
         _set_default_table_style(table)
 
         # add table header
-        header = [
-            "Code H4",
-            "Jaar",
-            "Omschrijving",
-            "Domein",
-            "Weging ED4"
-        ]
+        header = ["Code H4", "Jaar", "Omschrijving", "Domein", "Weging ED4"]
         _set_table_header(table, header)
 
         # add table body
@@ -461,13 +444,7 @@ def add_vak_overstappers_vwo5(
         _set_default_table_style(table)
 
         # add table header
-        header = [
-            "Code H4",
-            "Jaar",
-            "Omschrijving",
-            "Domein",
-            "Weging ED4"
-        ]
+        header = ["Code H4", "Jaar", "Omschrijving", "Domein", "Weging ED4"]
         _set_table_header(table, header)
 
         # add table body

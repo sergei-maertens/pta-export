@@ -2,7 +2,7 @@ from typing import List
 
 from django.db import models
 
-from .constants import Leerjaren, Types, OverstapActies
+from .constants import Leerjaren, OverstapActies, Types
 from .fields import IntegerDateField, Latin1ButActuallyCP1252CharField
 
 TOETSWEEK_FIELDS = (
@@ -92,10 +92,7 @@ class Overstap(models.Model):
         on_delete=models.SET_NULL,
     )
     actie = models.IntegerField(
-        db_column="OCO_Actie",
-        choices=OverstapActies.choices,
-        blank=True,
-        null=True
+        db_column="OCO_Actie", choices=OverstapActies.choices, blank=True, null=True
     )
 
     class Meta:
