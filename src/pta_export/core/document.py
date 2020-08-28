@@ -356,10 +356,6 @@ def add_vak_overstappers_vwo5(
         # try to set global font name
         _set_default_font(paragraph)
 
-        table = document.add_table(rows=len(vak.overnemen_herwaarderen) + 1, cols=6)
-        _set_default_table_style(table)
-
-        # add table header
         header = [
             "Code V4/V5",
             "Jaar",
@@ -368,22 +364,17 @@ def add_vak_overstappers_vwo5(
             "Overnemen/Herwaarderen",
             "Weging ED4",
         ]
-        _set_table_header(table, header)
-
-        # add table body
-        for index, overstap in enumerate(vak.overnemen_herwaarderen, 1):
-            jaar = f"{overstap.oude_toets.jaar}-{overstap.oude_toets.jaar + 1}"
-
-            row_cells = table.rows[index].cells
-            row_cells[0].text = overstap.oude_toets.code
-            row_cells[1].text = jaar
-            row_cells[2].text = clean_text(overstap.oude_toets.omschrijving)
-            row_cells[3].text = overstap.oude_toets.domein
-            row_cells[4].text = overstap.get_actie_display()
-            row_cells[5].text = str(overstap.weging_ed4)
-        _style_table_cells(table, index_no_center=2)
-
-        # style table dimensions
+        table_data = [
+            [
+                overstap.oude_toets.code,
+                f"{overstap.oude_toets.jaar}-{overstap.oude_toets.jaar + 1}",
+                clean_text(overstap.oude_toets.omschrijving),
+                overstap.oude_toets.domein,
+                overstap.get_actie_display(),
+                str(overstap.weging_ed4),
+            ]
+            for overstap in vak.overnemen_herwaarderen
+        ]
         WIDTHS = {
             0: Cm(2.00),
             1: Cm(2.50),
@@ -392,7 +383,7 @@ def add_vak_overstappers_vwo5(
             4: Cm(3.00),
             5: Cm(2.00),
         }
-        _set_column_widths(table, WIDTHS)
+        create_table(document, header, table_data, index_no_center=2, widths=WIDTHS)
 
     if vak.inhalen:
         paragraph = document.add_paragraph(
@@ -403,26 +394,17 @@ def add_vak_overstappers_vwo5(
         if vak.overnemen_herwaarderen:
             paragraph.paragraph_format.space_before = Pt(10)
 
-        table = document.add_table(rows=len(vak.inhalen) + 1, cols=5)
-        _set_default_table_style(table)
-
-        # add table header
         header = ["Code H4", "Jaar", "Omschrijving", "Domein", "Weging ED4"]
-        _set_table_header(table, header)
-
-        # add table body
-        for index, overstap in enumerate(vak.inhalen, 1):
-            jaar = f"{overstap.oude_toets.jaar}-{overstap.oude_toets.jaar + 1}"
-
-            row_cells = table.rows[index].cells
-            row_cells[0].text = overstap.oude_toets.code
-            row_cells[1].text = jaar
-            row_cells[2].text = clean_text(overstap.oude_toets.omschrijving)
-            row_cells[3].text = overstap.oude_toets.domein
-            row_cells[4].text = str(overstap.weging_ed4)
-        _style_table_cells(table, index_no_center=2)
-
-        # style table dimensions
+        table_data = [
+            [
+                overstap.oude_toets.code,
+                f"{overstap.oude_toets.jaar}-{overstap.oude_toets.jaar + 1}",
+                clean_text(overstap.oude_toets.omschrijving),
+                overstap.oude_toets.domein,
+                str(overstap.weging_ed4),
+            ]
+            for overstap in vak.inhalen
+        ]
         WIDTHS = {
             0: Cm(2.00),
             1: Cm(2.50),
@@ -430,7 +412,7 @@ def add_vak_overstappers_vwo5(
             3: Cm(3.25),
             4: Cm(2.00),
         }
-        _set_column_widths(table, WIDTHS)
+        create_table(document, header, table_data, index_no_center=2, widths=WIDTHS)
 
     if vak.inhaalopdrachten:
         paragraph = document.add_paragraph(
@@ -442,26 +424,17 @@ def add_vak_overstappers_vwo5(
         if vak.overnemen_herwaarderen or vak.inhalen:
             paragraph.paragraph_format.space_before = Pt(10)
 
-        table = document.add_table(rows=len(vak.inhaalopdrachten) + 1, cols=5)
-        _set_default_table_style(table)
-
-        # add table header
         header = ["Code H4", "Jaar", "Omschrijving", "Domein", "Weging ED4"]
-        _set_table_header(table, header)
-
-        # add table body
-        for index, toets in enumerate(vak.inhaalopdrachten, 1):
-            jaar = f"{toets.jaar}-{toets.jaar + 1}"
-
-            row_cells = table.rows[index].cells
-            row_cells[0].text = toets.code
-            row_cells[1].text = jaar
-            row_cells[2].text = clean_text(toets.omschrijving)
-            row_cells[3].text = toets.domein
-            row_cells[4].text = str(toets.weging_ed4)
-        _style_table_cells(table, index_no_center=2)
-
-        # style table dimensions
+        table_data = [
+            [
+                toets.code,
+                f"{toets.jaar}-{toets.jaar + 1}",
+                clean_text(toets.omschrijving),
+                toets.domein,
+                str(toets.weging_ed4),
+            ]
+            for toets in vak.inhaalopdrachten
+        ]
         WIDTHS = {
             0: Cm(2.00),
             1: Cm(2.50),
@@ -469,7 +442,7 @@ def add_vak_overstappers_vwo5(
             3: Cm(3.25),
             4: Cm(2.00),
         }
-        _set_column_widths(table, WIDTHS)
+        create_table(document, header, table_data, index_no_center=2, widths=WIDTHS)
 
     document.add_page_break()
 
