@@ -38,7 +38,7 @@ def export(year: int, leerjaar: int) -> Document:
                 .filter(actie__in=(
                     OverstapActies.overnemen, OverstapActies.herwaarderen
                 ))
-                .order_by("oude_toets__lesweek", "oude_toets__code")
+                .order_by("oude_toets__klas", "oude_toets__code")
             ),
             to_attr="overnemen_herwaarderen",
         )
