@@ -50,6 +50,11 @@ def export(year: int, leerjaar: int) -> Document:
             ),
             to_attr="inhalen",
         ),
+        Prefetch(
+            "toets_set",
+            queryset=toetsen.filter(type=8),
+            to_attr="inhaalopdrachten",
+        ),
     ).order_by(Lower("naam"))
     doc = create_document(year, leerjaar, vakken)
     translation.deactivate()

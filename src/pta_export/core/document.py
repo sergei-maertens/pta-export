@@ -345,9 +345,13 @@ def add_vak_overstappers_vwo5(
     year: int,
     leerjaar: int,
 ):
-    # overstappen/herwaarderen table
-    # if not vak.overnemen_herwaarderen:
-    #     return
+    render_vak = any((
+        vak.overnemen_herwaarderen,
+        vak.inhalen,
+        vak.inhaalopdrachten,
+    ))
+    if not render_vak:
+        return
 
     add_header(document, vak, year, leerjaar)
 
@@ -431,6 +435,51 @@ def add_vak_overstappers_vwo5(
             row_cells[2].text = clean_text(overstap.oude_toets.omschrijving)
             row_cells[3].text = overstap.oude_toets.domein
             row_cells[4].text = str(overstap.weging_ed4)
+        _style_table_cells(table, index_no_center=2)
+
+        # style table dimensions
+        WIDTHS = {
+            0: Cm(2.00),
+            1: Cm(2.50),
+            2: Cm(10.43),
+            3: Cm(3.25),
+            4: Cm(2.00),
+        }
+        _set_column_widths(table, WIDTHS)
+
+    if vak.inhaalopdrachten:
+        paragraph = document.add_paragraph(
+            "Tevens moet de volgende inhaalopdracht worden gemaakt om aan het "
+            "schoolexamen Havo te voldoen:"
+        )
+        # try to set global font name
+        _set_default_font(paragraph)
+        if vak.overnemen_herwaarderen or vak.inhalen:
+            paragraph.paragraph_format.space_before = Pt(10)
+
+        table = document.add_table(rows=len(vak.inhaalopdrachten) + 1, cols=5)
+        _set_default_table_style(table)
+
+        # add table header
+        header = [
+            "Code H4",
+            "Jaar",
+            "Omschrijving",
+            "Domein",
+            "Weging ED4"
+        ]
+        _set_table_header(table, header)
+
+        # add table body
+        for index, toets in enumerate(vak.inhaalopdrachten, 1):
+            jaar = f"{toets.jaar}-{toets.jaar + 1}"
+
+            row_cells = table.rows[index].cells
+            row_cells[0].text = toets.code
+            row_cells[1].text = jaar
+            row_cells[2].text = clean_text(toets.omschrijving)
+            row_cells[3].text = toets.domein
+            row_cells[4].text = str(toets.weging_ed4)
         _style_table_cells(table, index_no_center=2)
 
         # style table dimensions
