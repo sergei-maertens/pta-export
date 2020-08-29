@@ -450,8 +450,12 @@ def add_vak_overstappers_vwo5(
 def add_vak_overstappers_vwo6(
     document: Document, logo_path: str, vak: Vak, year: int, leerjaar: int,
 ) -> None:
-    if not vak.overstappen_vwo6:
+    if not vak.h5_toetsen:
         return
+
+    overstappen = {
+        overstap.oude_toets_id: overstap for overstap in vak.overstappen_vwo6
+    }
 
     add_header(document, vak, year, leerjaar)
 
@@ -463,16 +467,36 @@ def add_vak_overstappers_vwo6(
     # try to set global font name
     _set_default_font(paragraph)
 
+    PREFIX_MAPPING = {
+        Leerjaren.vwo_4: "V4",
+        Leerjaren.vwo_5: "V5",
+        Leerjaren.vwo_6: "V6",
+    }
+
+    def _get_oude_toets(toets) -> str:
+        overstap = overstappen.get(toets.id)
+        if not overstap:
+            return ""
+        if not overstap.h5_toets:
+            return ""
+        prefix = PREFIX_MAPPING[overstap.h5_toets.klas]
+        return f"{prefix} {overstap.h5_toets.code}"
+
+    def _get_actie(toets):
+        overstap = overstappen.get(toets.id)
+        if not overstap:
+            return ""
+        return overstap.get_actie_display()
+
     table_data = [
         [
-            overstap.oude_toets.code,
-            "???",
-            clean_text(overstap.oude_toets.omschrijving),
-            overstap.oude_toets.domein,
-            overstap.get_actie_display(),
+            toets.code,
+            _get_oude_toets(toets),
+            clean_text(toets.omschrijving),
+            toets.domein or "",
+            _get_actie(toets),
         ]
-        for overstap in vak.overstappen_vwo6
-        if overstap.oude_toets
+        for toets in vak.h5_toetsen
     ]
 
     header = [

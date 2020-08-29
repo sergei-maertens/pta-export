@@ -8,7 +8,7 @@ from django.utils import translation
 
 from docx import Document
 
-from .constants import OverstapActies
+from .constants import Leerjaren, OverstapActies
 from .document import add_vak, initialize_document
 from .models import Kalender, Overstap, Toets, Vak, Voetnoot
 
@@ -51,8 +51,19 @@ def export(year: int, leerjaar: int) -> Document:
             "toets_set", queryset=toetsen.filter(type=8), to_attr="inhaalopdrachten",
         ),
         Prefetch(
+            "toets_set",
+            queryset=(
+                Toets.objects.exclude(soortwerk=12)
+                .filter(jaar=year, klas=Leerjaren.havo_5)
+                .order_by("code")
+            ),
+            to_attr="h5_toetsen",
+        ),
+        Prefetch(
             "overstap_set",
-            queryset=overstappen.filter(oude_toets__isnull=False),
+            queryset=(
+                overstappen.filter(oude_toets__isnull=False).select_related("h5_toets")
+            ),
             to_attr="overstappen_vwo6",
         ),
     ).order_by(Lower("naam"))

@@ -91,6 +91,14 @@ class Overstap(models.Model):
         null=True,
         on_delete=models.SET_NULL,
     )
+    h5_toets = models.ForeignKey(
+        "Toets",
+        db_column="OCO_H5toets",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+    )
     actie = models.IntegerField(
         db_column="OCO_Actie", choices=OverstapActies.choices, blank=True, null=True
     )
