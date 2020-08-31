@@ -15,7 +15,7 @@ from docx.shared import Cm, Mm, Pt
 
 from .constants import Leerjaren
 from .models import Vak
-from .utils import get_se_weging, get_simple_weging
+from .utils import get_weging_text
 
 LEERJAAR_WEGING = {
     Leerjaren.havo_4: ("Weging ED4", "weging_ed4"),
@@ -33,12 +33,6 @@ R4_LEERJAREN = (
 )
 
 HEADER_BG_COLOR = "D9D9D9"
-
-SIMPLE_WEGING = {
-    Leerjaren.vwo_4: "ED4",
-    Leerjaren.havo_4: "ED4",
-    Leerjaren.vwo_5: "ED5",
-}
 
 COLUMN_WIDTHS = {
     0: Cm(1.51),
@@ -286,53 +280,35 @@ def add_vak_regular(
         for cell in column.cells:
             cell.width = column.width
 
-    weging_text = None
-    if leerjaar in SIMPLE_WEGING:
-        se_weging = get_simple_weging(vak)
-        if se_weging:
-            weging_label = SIMPLE_WEGING[leerjaar]
-            weging_text = (
-                f"* Het {weging_label} cijfer telt {se_weging} mee "
-                "in het schoolexamencijfer"
-            )
-    else:
-        # add note for se_weging
-        se_weging = get_se_weging(year, leerjaar, vak)
-        if se_weging is not None:
-            denumerator, *numerators = se_weging
+    # REMARKS, below the table
+    weging_text = get_weging_text(year, leerjaar, vak)
+    toets_voetnoot_content = [x for x in toets_content if x.voetnoot]
+    vak_voetnoten = [voetnoot.noot for voetnoot in vak.voetnoten]
 
-            bits = []
-            for numerator, label in zip(numerators, ("ED4", "ED5", "ED6")):
-                if not numerator:
-                    continue
-                bits.append(f"{numerator}x {label}")
-
-            _weging = f"({' + '.join(bits)}) / {denumerator}"
-            weging_text = f"berekening SE cijfer: {_weging}"
+    if weging_text or toets_voetnoot_content or vak_voetnoten:
+        remarks_p = document.add_paragraph("opmerking")
+        remarks_p.runs[0].bold = True
+        remarks_p.paragraph_format.space_before = Pt(10)
 
     if weging_text:
         p_weging = document.add_paragraph(weging_text)
-        p_weging.paragraph_format.space_before = Pt(10)
         p_weging.runs[0].font.size = Pt(10)
+        p_weging.paragraph_format.space_after = 0
 
-    toets_voetnoot_content = [x for x in toets_content if x.voetnoot]
     if toets_voetnoot_content:
         p_toets_voetnoten = document.add_paragraph()
-        p_toets_voetnoten.paragraph_format.space_before = Pt(10)
+        p_toets_voetnoten.paragraph_format.space_after = 0
         for content in toets_voetnoot_content:
             run_super = p_toets_voetnoten.add_run(text=f"{content.voetnoot_nr})")
             run_super.font.superscript = True
             p_toets_voetnoten.add_run(text=f" {normalize_newlines(content.voetnoot)}\n")
 
-    vak_voetnoten = [voetnoot.noot for voetnoot in vak.voetnoten]
     if vak_voetnoten:
-        voetnoten = document.add_paragraph("opmerking\n")
-        voetnoten.runs[0].bold = True
-        voetnoten.paragraph_format.space_before = Pt(10)
-
+        voetnoten_p = document.add_paragraph()
+        voetnoten_p.paragraph_format.space_after = 0
         for voetnoot in vak_voetnoten:
             _voetnoot = normalize_newlines(voetnoot)
-            voetnoten.add_run(f"{_voetnoot}\n")
+            voetnoten_p.add_run(f"{_voetnoot}\n")
 
     document.add_page_break()
 
