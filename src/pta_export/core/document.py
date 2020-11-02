@@ -58,7 +58,7 @@ def initialize_document() -> Document:
     section.bottom_margin = Cm(2.5)
     section.top_margin = Cm(2.5)
     section.left_margin = Cm(2)
-    section.right_margin = Cm(2)
+    section.right_margin = Cm(1)
 
     return document
 
