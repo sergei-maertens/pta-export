@@ -4,11 +4,9 @@ define('ENDPOINT', 'https://pta-export.regex-it.nl/api/export');
 
 define('TOKEN', getenv('TOKEN') ?: 'dummy-token');
 
-function getExport($jaar, $klas, $outfile)
+function getExport($jaar, $klas)
 {
     echo "Getting export for jaar $jaar and klas $klas\n";
-
-    // $fp = fopen($outfile, "wb");
 
     $params = array(
         'jaar' => $jaar,
@@ -38,9 +36,20 @@ function getExport($jaar, $klas, $outfile)
 }
 
 
-$response = getExport('2019', '1', '/tmp/ignored.docx');
-var_dump($response);
+$response = getExport('2019', '1');
+// var_dump($response);
 
-// TODO: example on how to output this to the browser
+header('Content-Description: File Transfer');
+header('Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+header('Content-Disposition: attachment; filename=export-2019-1.docx');
+header('Content-Transfer-Encoding: binary');
+header('Expires: 0');
+header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+header('Pragma: public');
+header('Content-Length: ' . strlen($response));
+ob_clean();
+flush();
+echo $response;
+flush();
 
 ?>
