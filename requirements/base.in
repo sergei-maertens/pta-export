@@ -10,7 +10,7 @@ python-dotenv  # environment variables for secrets
 python-decouple  # processing of envvar configs
 
 # Framework libraries
-django
+django~=3.0.0
 django-axes
 django-choices
 django-hijack

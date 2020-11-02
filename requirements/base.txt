@@ -4,10 +4,10 @@
 #
 #    pip-compile --no-index requirements/base.in
 #
-asgiref==3.2.7            # via django
-bcrypt==3.1.7             # via -r requirements/base.in
-certifi==2020.4.5.1       # via sentry-sdk
-cffi==1.14.2              # via bcrypt
+asgiref==3.3.0            # via django
+bcrypt==3.2.0             # via -r requirements/base.in
+certifi==2020.6.20        # via sentry-sdk
+cffi==1.14.3              # via bcrypt
 django-appconf==1.0.4     # via django-axes
 django-axes==5.3.1        # via -r requirements/base.in
 django-choices==1.7.1     # via -r requirements/base.in
@@ -16,7 +16,7 @@ django-hijack-admin==2.1.10  # via -r requirements/base.in
 django-hijack==2.1.10     # via -r requirements/base.in, django-hijack-admin
 django-ipware==2.1.0      # via django-axes
 django-redis==4.11.0      # via -r requirements/base.in
-django==3.0.6             # via -r requirements/base.in, django-appconf, django-axes, django-choices, django-redis, djangorestframework
+django==3.0.11            # via -r requirements/base.in, django-appconf, django-axes, django-choices, django-redis, djangorestframework
 djangorestframework==3.11.0  # via -r requirements/base.in
 lxml==4.5.0               # via python-docx
 markdown==3.2.2           # via -r requirements/base.in
