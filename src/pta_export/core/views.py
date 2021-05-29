@@ -10,7 +10,7 @@ from .forms import ExportForm
 
 
 def get_export_response(jaar: int, leerjaar: int):
-    _leerjaar = Leerjaren.labels[leerjaar]
+    _leerjaar = dict(Leerjaren.choices)[leerjaar]
 
     document = export(jaar, leerjaar)
 
