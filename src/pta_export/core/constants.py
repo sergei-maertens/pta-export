@@ -32,6 +32,7 @@ class Leerjaren(models.IntegerChoices):
     empty = 0, ""
     havo_4 = 1, "4 Havo"
     havo_5 = 2, "5 Havo"
+    vwo_3 = 16, "3 VWO"
     vwo_4 = 3, "4 VWO"
     vwo_5 = 4, "5 VWO"
     vwo_6 = 5, "6 VWO"
@@ -49,6 +50,8 @@ class Types(models.IntegerChoices):
     ED4 = 6, "jaarcijfer klas 4"
     ED5 = 7, "jaarcijfer klas 5"
     ED6 = 8, "jaarcijfer klas 6"
+    TYPE_9 = 9, "type 9"
+    TYPE_10 = 10, "type 10"
 
 
 class OverstapOpties(models.IntegerChoices):
