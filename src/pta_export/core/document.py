@@ -18,12 +18,15 @@ from .models import Vak
 from .utils import get_weging_text
 
 LEERJAAR_WEGING = {
+    Leerjaren.vwo_3: ("Weging", "weging_r4"),
     Leerjaren.havo_4: ("Weging ED4", "weging_ed4"),
     Leerjaren.vwo_4: ("Weging ED4", "weging_ed4"),
     Leerjaren.havo_5: ("Weging ED5", "weging_ed5"),
     Leerjaren.vwo_5: ("Weging ED5", "weging_ed5"),
     Leerjaren.vwo_6: ("Weging ED6", "weging_ed6"),
 }
+
+HIDE_DOMEIN = {Leerjaren.vwo_3}
 
 
 R4_LEERJAREN = (
@@ -119,6 +122,9 @@ def get_toets_table(
         "Tijd\n(min)",
     ]
 
+    if leerjaar in HIDE_DOMEIN:
+        header.remove("Domein")
+
     if leerjaar in R4_LEERJAREN:
         header.append("Weging R4")
 
@@ -154,12 +160,14 @@ def get_toets_table(
                 inleverdatum=inleverdatum,
                 voetnoot=toets.voetnoot,
             ),
-            toets.domein or "",
             periode or "",
             week,
             soort_werk,
             toets.tijd or "",
         ]
+
+        if leerjaar not in HIDE_DOMEIN:
+            row.insert(2, toets.domein or "")
 
         if leerjaar in R4_LEERJAREN:
             row.append(toets.weging_r4 or "")
@@ -174,7 +182,7 @@ def get_toets_table(
 
 
 def add_header(document: Document, vak: Vak, year: int, leerjaar: int):
-    _leerjaar = Leerjaren.labels[leerjaar]
+    _leerjaar = dict(Leerjaren.choices)[leerjaar]
     school_year = f"{year}-{year + 1}"
 
     # set up the table header

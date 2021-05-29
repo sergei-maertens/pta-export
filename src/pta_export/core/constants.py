@@ -50,8 +50,6 @@ class Types(models.IntegerChoices):
     ED4 = 6, "jaarcijfer klas 4"
     ED5 = 7, "jaarcijfer klas 5"
     ED6 = 8, "jaarcijfer klas 6"
-    TYPE_9 = 9, "type 9"
-    TYPE_10 = 10, "type 10"
 
 
 class OverstapOpties(models.IntegerChoices):
