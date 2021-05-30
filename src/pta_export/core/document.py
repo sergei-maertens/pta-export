@@ -47,6 +47,18 @@ COLUMN_WIDTHS = {
     6: Cm(1.5),
 }
 
+COLUMN_WIDTHS_PER_LEERJAAR = {
+    Leerjaren.vwo_3: {
+        0: Cm(1.51),
+        1: Cm(10.43),
+        2: Cm(1.75),
+        3: Cm(1.5),
+        4: Cm(2.75),
+        5: Cm(1.5),
+        6: Cm(2.0),
+    }
+}
+
 
 def initialize_document() -> Document:
     document = Document()
@@ -270,20 +282,22 @@ def add_vak_regular(
                     datum_par.runs[0].italic = True
     _style_table_cells(table)
 
+    column_widths = COLUMN_WIDTHS_PER_LEERJAAR.get(leerjaar, COLUMN_WIDTHS)
+
     # set the column widths
-    num_extra_columns = len(table.columns) - len(COLUMN_WIDTHS)
+    num_extra_columns = len(table.columns) - len(column_widths)
     remaining_width = (
         section.page_width
         - section.left_margin
         - section.right_margin
-        - sum(COLUMN_WIDTHS.values())
+        - sum(column_widths.values())
         - Mm(1)
     )
     extra_column_width = (
         int(remaining_width / num_extra_columns) if num_extra_columns else 0
     )
     for index, column in enumerate(table.columns):
-        column.width = COLUMN_WIDTHS.get(index, extra_column_width)
+        column.width = column_widths.get(index, extra_column_width)
         # sigh... dumb format
         for cell in column.cells:
             cell.width = column.width
