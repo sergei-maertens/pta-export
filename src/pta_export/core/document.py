@@ -18,12 +18,15 @@ from .models import Vak
 from .utils import get_weging_text
 
 LEERJAAR_WEGING = {
+    Leerjaren.vwo_3: ("Weging", "weging_r4"),
     Leerjaren.havo_4: ("Weging ED4", "weging_ed4"),
     Leerjaren.vwo_4: ("Weging ED4", "weging_ed4"),
     Leerjaren.havo_5: ("Weging ED5", "weging_ed5"),
     Leerjaren.vwo_5: ("Weging ED5", "weging_ed5"),
     Leerjaren.vwo_6: ("Weging ED6", "weging_ed6"),
 }
+
+HIDE_DOMEIN = {Leerjaren.vwo_3}
 
 
 R4_LEERJAREN = (
@@ -42,6 +45,18 @@ COLUMN_WIDTHS = {
     4: Cm(1.5),
     5: Cm(2.25),
     6: Cm(1.5),
+}
+
+COLUMN_WIDTHS_PER_LEERJAAR = {
+    Leerjaren.vwo_3: {
+        0: Cm(1.51),
+        1: Cm(10.43),
+        2: Cm(1.75),
+        3: Cm(1.5),
+        4: Cm(2.75),
+        5: Cm(1.5),
+        6: Cm(2.0),
+    }
 }
 
 
@@ -119,6 +134,9 @@ def get_toets_table(
         "Tijd\n(min)",
     ]
 
+    if leerjaar in HIDE_DOMEIN:
+        header.remove("Domein")
+
     if leerjaar in R4_LEERJAREN:
         header.append("Weging R4")
 
@@ -154,12 +172,14 @@ def get_toets_table(
                 inleverdatum=inleverdatum,
                 voetnoot=toets.voetnoot,
             ),
-            toets.domein or "",
             periode or "",
             week,
             soort_werk,
             toets.tijd or "",
         ]
+
+        if leerjaar not in HIDE_DOMEIN:
+            row.insert(2, toets.domein or "")
 
         if leerjaar in R4_LEERJAREN:
             row.append(toets.weging_r4 or "")
@@ -174,7 +194,7 @@ def get_toets_table(
 
 
 def add_header(document: Document, vak: Vak, year: int, leerjaar: int):
-    _leerjaar = Leerjaren.labels[leerjaar]
+    _leerjaar = dict(Leerjaren.choices)[leerjaar]
     school_year = f"{year}-{year + 1}"
 
     # set up the table header
@@ -262,20 +282,22 @@ def add_vak_regular(
                     datum_par.runs[0].italic = True
     _style_table_cells(table)
 
+    column_widths = COLUMN_WIDTHS_PER_LEERJAAR.get(leerjaar, COLUMN_WIDTHS)
+
     # set the column widths
-    num_extra_columns = len(table.columns) - len(COLUMN_WIDTHS)
+    num_extra_columns = len(table.columns) - len(column_widths)
     remaining_width = (
         section.page_width
         - section.left_margin
         - section.right_margin
-        - sum(COLUMN_WIDTHS.values())
+        - sum(column_widths.values())
         - Mm(1)
     )
     extra_column_width = (
         int(remaining_width / num_extra_columns) if num_extra_columns else 0
     )
     for index, column in enumerate(table.columns):
-        column.width = COLUMN_WIDTHS.get(index, extra_column_width)
+        column.width = column_widths.get(index, extra_column_width)
         # sigh... dumb format
         for cell in column.cells:
             cell.width = column.width

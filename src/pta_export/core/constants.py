@@ -32,6 +32,7 @@ class Leerjaren(models.IntegerChoices):
     empty = 0, ""
     havo_4 = 1, "4 Havo"
     havo_5 = 2, "5 Havo"
+    vwo_3 = 16, "3 VWO"
     vwo_4 = 3, "4 VWO"
     vwo_5 = 4, "5 VWO"
     vwo_6 = 5, "6 VWO"

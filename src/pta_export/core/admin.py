@@ -39,6 +39,10 @@ class ToetsAdmin(admin.ModelAdmin):
         "domein",
         "week",
         "lesweek",
+        "weging_ed4",
+        "weging_ed5",
+        "weging_ed6",
+        "weging_r4",
     )
     list_select_related = ("vak",)
     list_filter = ("jaar", "vak", "klas")

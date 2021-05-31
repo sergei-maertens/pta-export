@@ -9,11 +9,12 @@ YEAR_5 = (Leerjaren.havo_5, Leerjaren.vwo_5)
 YEAR_6 = (Leerjaren.vwo_6,)
 
 HAVO = (Leerjaren.havo_4, Leerjaren.havo_5)
-VWO = (Leerjaren.vwo_4, Leerjaren.vwo_5, Leerjaren.vwo_6)
+VWO = (Leerjaren.vwo_3, Leerjaren.vwo_4, Leerjaren.vwo_5, Leerjaren.vwo_6)
 
 OVERSTAPPERS = (Leerjaren.overstappers_vwo_5, Leerjaren.overstappers_vwo_6)
 
 SIMPLE_WEGING = {
+    Leerjaren.vwo_3: "ED4",
     Leerjaren.vwo_4: "ED4",
     Leerjaren.havo_4: "ED4",
     Leerjaren.vwo_5: "ED5",
@@ -61,10 +62,6 @@ def get_se_weging(
         return None
 
     if leerjaar in OVERSTAPPERS:
-        return None
-
-    # nothing to display for 2020!
-    if leerjaar == Leerjaren.vwo_6:
         return None
 
     toets_this_year = vak.toets_set.filter(jaar=year, klas=leerjaar).first()
