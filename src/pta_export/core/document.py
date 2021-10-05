@@ -208,10 +208,8 @@ def add_header(document: Document, vak: Vak, year: int, leerjaar: int):
     if vak.afkorting and vak.weergeven == 1:
         vak_naam = f"{vak_naam} ({vak.afkorting})"
 
-    if leerjaar == 16:
-        header_run = header_p.add_run(f"PTA\t{vak_naam}\t{_leerjaar}\t{school_year}")
-        else:
-        header_run = header_p.add_run(f"PTB\t{vak_naam}\t{_leerjaar}\t{school_year}")
+    prefix = "PTB" if leerjaar == Leerjaren.vwo_3 else "PTA"
+    header_run = header_p.add_run(f"{prefix}\t{vak_naam}\t{_leerjaar}\t{school_year}")
     # header_run.font.name = "Arial"
     header_run.font.size = Pt(14)
     header_run.bold = True
