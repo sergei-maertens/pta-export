@@ -65,7 +65,7 @@ django-redis==4.11.0
     # via -r requirements/base.txt
 django-webtest==1.9.7
     # via -r requirements/test-tools.in
-djangorestframework==3.11.0
+djangorestframework==3.11.2
     # via -r requirements/base.txt
 factory-boy==2.12.0
     # via -r requirements/test-tools.in
