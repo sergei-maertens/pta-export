@@ -33,7 +33,7 @@ cffi==1.14.3
     # via
     #   -r requirements/ci.txt
     #   bcrypt
-chardet==3.0.4
+charset-normalizer==2.0.6
     # via
     #   -r requirements/ci.txt
     #   requests
@@ -47,7 +47,7 @@ cssselect==1.1.0
     # via
     #   -r requirements/ci.txt
     #   pyquery
-django==3.0.11
+django==3.0.14
     # via
     #   -r requirements/ci.txt
     #   django-appconf
@@ -114,16 +114,16 @@ imagesize==1.2.0
     # via sphinx
 isort==4.3.21
     # via -r requirements/dev.in
-jinja2==2.11.2
+jinja2==3.0.2
     # via sphinx
-lxml==4.5.0
+lxml==4.6.3
     # via
     #   -r requirements/ci.txt
     #   pyquery
     #   python-docx
 markdown==3.2.2
     # via -r requirements/ci.txt
-markupsafe==1.1.1
+markupsafe==2.0.1
     # via jinja2
 mccabe==0.6.1
     # via flake8
@@ -135,7 +135,9 @@ passlib==1.7.2
     # via -r requirements/ci.txt
 pathspec==0.8.0
     # via black
-pip-tools==5.1.2
+pep517==0.11.0
+    # via pip-tools
+pip-tools==6.3.0
     # via -r requirements/dev.in
 psycopg2==2.8.5
     # via -r requirements/ci.txt
@@ -147,7 +149,7 @@ pycparser==2.20
     #   cffi
 pyflakes==2.1.1
     # via flake8
-pygments==2.6.1
+pygments==2.10.0
     # via sphinx
 pyparsing==2.4.7
     # via packaging
@@ -175,7 +177,7 @@ redis==3.5.1
     #   django-redis
 regex==2020.5.7
     # via black
-requests==2.23.0
+requests==2.26.0
     # via
     #   -r requirements/ci.txt
     #   requests-mock
@@ -193,7 +195,6 @@ six==1.14.0
     #   django-extensions
     #   freezegun
     #   packaging
-    #   pip-tools
     #   python-dateutil
     #   requests-mock
     #   webtest
@@ -234,9 +235,11 @@ text-unidecode==1.3
     #   faker
 toml==0.10.0
     # via black
+tomli==1.2.1
+    # via pep517
 typed-ast==1.4.1
     # via black
-urllib3==1.25.9
+urllib3==1.26.7
     # via
     #   -r requirements/ci.txt
     #   requests
@@ -255,9 +258,13 @@ webtest==2.0.35
     # via
     #   -r requirements/ci.txt
     #   django-webtest
+wheel==0.37.0
+    # via pip-tools
 
 # The following packages are considered to be unsafe in a requirements file:
 pip==21.2.4
     # via pip-tools
 setuptools==58.2.0
-    # via sphinx
+    # via
+    #   pip-tools
+    #   sphinx

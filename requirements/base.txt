@@ -12,7 +12,7 @@ certifi==2020.6.20
     # via sentry-sdk
 cffi==1.14.3
     # via bcrypt
-django==3.0.11
+django==3.0.14
     # via
     #   -r requirements/base.in
     #   django-appconf
@@ -42,7 +42,7 @@ django-redis==4.11.0
     # via -r requirements/base.in
 djangorestframework==3.11.0
     # via -r requirements/base.in
-lxml==4.5.0
+lxml==4.6.3
     # via python-docx
 markdown==3.2.2
     # via -r requirements/base.in
@@ -75,7 +75,7 @@ six==1.14.0
     #   django-compat
 sqlparse==0.3.1
     # via django
-urllib3==1.25.9
+urllib3==1.26.7
     # via sentry-sdk
 uwsgi==2.0.18
     # via -r requirements/base.in
