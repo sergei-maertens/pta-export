@@ -7,14 +7,14 @@
 asgiref==3.3.0
     # via django
 bcrypt==3.2.0
-    # via -r requirements/base.in
+    # via -r base.in
 certifi==2020.6.20
     # via sentry-sdk
 cffi==1.14.3
     # via bcrypt
-django==3.0.14
+django==3.1.13
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   django-appconf
     #   django-axes
     #   django-choices
@@ -23,51 +23,51 @@ django==3.0.14
 django-appconf==1.0.4
     # via django-axes
 django-axes==5.3.1
-    # via -r requirements/base.in
+    # via -r base.in
 django-choices==1.7.1
-    # via -r requirements/base.in
+    # via -r base.in
 django-compat==1.0.15
     # via
     #   django-hijack
     #   django-hijack-admin
 django-hijack==2.1.10
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   django-hijack-admin
 django-hijack-admin==2.1.10
-    # via -r requirements/base.in
+    # via -r base.in
 django-ipware==2.1.0
     # via django-axes
 django-redis==4.11.0
-    # via -r requirements/base.in
+    # via -r base.in
 djangorestframework==3.11.0
-    # via -r requirements/base.in
+    # via -r base.in
 lxml==4.6.3
     # via python-docx
 markdown==3.2.2
-    # via -r requirements/base.in
+    # via -r base.in
 mysqlclient==1.4.6
-    # via -r requirements/base.in
+    # via -r base.in
 passlib==1.7.2
-    # via -r requirements/base.in
+    # via -r base.in
 psycopg2==2.8.5
-    # via -r requirements/base.in
+    # via -r base.in
 pycparser==2.20
     # via cffi
 python-decouple==3.3
-    # via -r requirements/base.in
+    # via -r base.in
 python-docx==0.8.10
-    # via -r requirements/base.in
+    # via -r base.in
 python-dotenv==0.13.0
-    # via -r requirements/base.in
+    # via -r base.in
 pytz==2020.1
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   django
 redis==3.5.1
     # via django-redis
 sentry-sdk==0.14.3
-    # via -r requirements/base.in
+    # via -r base.in
 six==1.14.0
     # via
     #   bcrypt
@@ -78,4 +78,4 @@ sqlparse==0.3.1
 urllib3==1.26.7
     # via sentry-sdk
 uwsgi==2.0.18
-    # via -r requirements/base.in
+    # via -r base.in

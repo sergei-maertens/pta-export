@@ -27,7 +27,7 @@ coverage==4.5.4
     # via -r requirements/test-tools.in
 cssselect==1.1.0
     # via pyquery
-django==3.0.14
+django==3.1.13
     # via
     #   -r requirements/base.txt
     #   django-appconf
