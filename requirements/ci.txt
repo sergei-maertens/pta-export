@@ -12,7 +12,7 @@ bcrypt==3.2.0
     # via -r requirements/base.txt
 beautifulsoup4==4.9.0
     # via webtest
-certifi==2020.6.20
+certifi==2022.12.7
     # via
     #   -r requirements/base.txt
     #   requests
