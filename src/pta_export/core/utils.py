@@ -88,7 +88,6 @@ def get_se_weging(
         toets_ed5 = toets_this_year
 
     if toets_ed4 is None:
-        assert not toets_ed5 or not toets_ed5.pct
         return None
 
     numerator_ed4, denumerator_ed4 = parse_edx(toets_ed4.pct)
