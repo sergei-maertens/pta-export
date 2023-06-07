@@ -172,26 +172,20 @@ def get_simple_weging(vak: Vak) -> Optional[str]:
 
 def get_weging_text(year: int, leerjaar: int, vak: Vak) -> Optional[str]:
     if leerjaar in SIMPLE_WEGING:
-        se_weging = get_simple_weging(vak)
-        if se_weging:
-            weging_label = SIMPLE_WEGING[leerjaar]
-            return (
-                f"* Het {weging_label} cijfer telt {se_weging} mee "
-                "in het schoolexamencijfer"
-            )
-    else:
-        # add note for se_weging
-        se_weging = get_se_weging(year, leerjaar, vak)
-        if se_weging is not None:
-            denumerator, *numerators = se_weging
+        return None
 
-            bits = []
-            for numerator, label in zip(numerators, ("ED4", "ED5", "ED6")):
-                if not numerator:
-                    continue
-                bits.append(f"{numerator}x {label}")
+    # add note for se_weging
+    se_weging = get_se_weging(year, leerjaar, vak)
+    if se_weging is not None:
+        denumerator, *numerators = se_weging
 
-            _weging = f"({' + '.join(bits)}) / {denumerator}"
-            return f"berekening SE cijfer: {_weging}"
+        bits = []
+        for numerator, label in zip(numerators, ("ED4", "ED5", "ED6")):
+            if not numerator:
+                continue
+            bits.append(f"{numerator}x {label}")
+
+        _weging = f"({' + '.join(bits)}) / {denumerator}"
+        return f"berekening SE cijfer: {_weging}"
 
     return None
