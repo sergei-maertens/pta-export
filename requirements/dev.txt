@@ -14,7 +14,7 @@ asgiref==3.7.2
     #   django
 attrs==19.3.0
     # via black
-babel==2.8.0
+babel==2.12.1
     # via sphinx
 backports.zoneinfo==0.2.1
     # via
@@ -104,7 +104,7 @@ isort==4.3.21
     # via -r requirements/dev.in
 jinja2==3.0.2
     # via sphinx
-lxml==4.6.3
+lxml==4.9.3
     # via
     #   -r requirements/ci.txt
     #   pyquery
@@ -237,7 +237,7 @@ urllib3==2.0.4
     #   sentry-sdk
 uwsgi==2.0.18
     # via -r requirements/ci.txt
-waitress==1.4.3
+waitress==2.1.2
     # via
     #   -r requirements/ci.txt
     #   webtest
@@ -249,7 +249,7 @@ webtest==2.0.35
     # via
     #   -r requirements/ci.txt
     #   django-webtest
-wheel==0.37.0
+wheel==0.41.1
     # via pip-tools
 
 # The following packages are considered to be unsafe in a requirements file:

@@ -63,7 +63,7 @@ freezegun==0.3.15
     # via -r requirements/test-tools.in
 idna==2.9
     # via requests
-lxml==4.6.3
+lxml==4.9.3
     # via
     #   -r requirements/base.txt
     #   pyquery
@@ -136,7 +136,7 @@ urllib3==2.0.4
     #   sentry-sdk
 uwsgi==2.0.18
     # via -r requirements/base.txt
-waitress==1.4.3
+waitress==2.1.2
     # via webtest
 webob==1.8.6
     # via webtest
