@@ -14,7 +14,7 @@ from docx.oxml.ns import nsdecls
 from docx.shared import Cm, Mm, Pt
 
 from .constants import Leerjaren
-from .models import Vak
+from .models import Toets, Vak
 from .utils import get_weging_text
 
 LEERJAAR_WEGING = {
@@ -336,6 +336,20 @@ def add_vak_regular(
     document.add_page_break()
 
 
+def iter_oude_toets_columns(oude_toets: Optional[Toets]):
+    if oude_toets is None:
+        yield "-"
+        yield "-"
+        yield "(toets ontbreekt)"
+        yield "-"
+        return
+
+    yield oude_toets.code,
+    yield f"{oude_toets.jaar}-{oude_toets.jaar + 1}",
+    yield clean_text(oude_toets.omschrijving),
+    yield oude_toets.domein,
+
+
 def add_vak_overstappers_vwo5(
     document: Document, logo_path: str, vak: Vak, year: int, leerjaar: int,
 ):
@@ -365,10 +379,7 @@ def add_vak_overstappers_vwo5(
         ]
         table_data = [
             [
-                overstap.oude_toets.code,
-                f"{overstap.oude_toets.jaar}-{overstap.oude_toets.jaar + 1}",
-                clean_text(overstap.oude_toets.omschrijving),
-                overstap.oude_toets.domein,
+                *iter_oude_toets_columns(overstap.oude_toets),
                 overstap.get_actie_display(),
                 str(overstap.weging_ed4),
             ]
