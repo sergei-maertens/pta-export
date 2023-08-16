@@ -7,7 +7,6 @@ var sourcemaps = require('gulp-sourcemaps');
 var sass = require('gulp-sass');
 var autoprefixer = require('autoprefixer');
 var cssnano = require('cssnano');
-var selectorLint = require('postcss-selector-lint');
 var argv = require('yargs').argv;
 var paths = require('../paths');
 
@@ -19,38 +18,7 @@ var eyeglass = new Eyeglass({
     outputStyle: isProduction ? 'compressed' : 'expanded',
 });
 
-let selectorLintConfig = {
-    global: {
-        // Simple
-        type: true,
-        class: true,
-        id: false,
-        universal: false,
-        attribute: false,
-
-        // Pseudo
-        psuedo: false,
-    },
-
-    local: {
-        // Simple
-        type: true,
-        class: true,
-        id: false,
-        universal: true,
-        attribute: true,
-
-        // Pseudo
-        psuedo: true,
-    },
-
-    options: {
-        excludedFiles: ['admin_overrides.css'],
-    }
-};
-
-
-var plugins = isProduction ? [cssnano(), autoprefixer()] : [autoprefixer(), selectorLint(selectorLintConfig)];
+var plugins = isProduction ? [cssnano(), autoprefixer()] : [autoprefixer()];
 
 
 /**

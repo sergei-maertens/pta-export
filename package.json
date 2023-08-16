@@ -7,9 +7,7 @@
     "doc": "doc"
   },
   "scripts": {
-    "test": "gulp test",
-    "build": "gulp build",
-    "watch": "gulp watch"
+    "build": "gulp build"
   },
   "repository": {
     "type": "git",
@@ -22,47 +20,17 @@
     "microscope-sass": "latest"
   },
   "devDependencies": {
-    "@babel/core": "latest",
-    "@babel/polyfill": "latest",
-    "@babel/preset-env": "latest",
     "autoprefixer": "latest",
-    "babel-loader": "latest",
-    "chai": "latest",
     "cssnano": "latest",
     "eyeglass": "latest",
     "gulp": "latest",
-    "gulp-file": "latest",
     "gulp-hub": "latest",
     "gulp-if": "latest",
-    "gulp-jshint": "latest",
-    "gulp-jshint-jslint-file-reporter": "latest",
     "gulp-postcss": "latest",
     "gulp-sass": "latest",
     "gulp-sourcemaps": "latest",
-    "istanbul-instrumenter-loader": "latest",
-    "jsdom": "latest",
-    "jsdom-global": "latest",
-    "jshint": "latest",
-    "jshint-stylish": "latest",
-    "karma": "latest",
-    "karma-chrome-launcher": "latest",
-    "karma-coverage": "latest",
-    "karma-firefox-launcher": "latest",
-    "karma-junit-reporter": "latest",
-    "karma-mocha": "latest",
-    "karma-phantomjs-launcher": "latest",
-    "karma-spec-reporter": "latest",
-    "karma-webpack": "latest",
-    "mocha": "latest",
     "postcss-loader": "latest",
-    "postcss-selector-lint": "latest",
     "sass-loader": "latest",
-    "simulant": "latest",
-    "sinon": "latest",
-    "url-loader": "latest",
-    "webpack": "latest",
-    "webpack-dev-server": "latest",
-    "webpack-stream": "latest",
     "yargs": "latest"
   }
 }
