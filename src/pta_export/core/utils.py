@@ -2,7 +2,7 @@ import math
 from typing import Optional, Tuple
 
 from .constants import Breuken, Leerjaren
-from .models import Vak
+from .models import Toets, Vak
 
 YEAR_4 = (Leerjaren.havo_4, Leerjaren.vwo_4)
 YEAR_5 = (Leerjaren.havo_5, Leerjaren.vwo_5)
@@ -64,7 +64,9 @@ def get_se_weging(
     if leerjaar in OVERSTAPPERS:
         return None
 
-    toets_this_year = vak.toets_set.filter(jaar=year, klas=leerjaar).first()
+    toets_this_year: Optional[Toets] = vak.toets_set.filter(
+        jaar=year, klas=leerjaar
+    ).first()
     if not toets_this_year:
         return None
 
@@ -72,7 +74,7 @@ def get_se_weging(
     previous_leerjaar = get_previous_leerjaar(leerjaar)
 
     # fetch a Toets from the previous year
-    toets_one_year_ago = vak.toets_set.filter(
+    toets_one_year_ago: Optional[Toets] = vak.toets_set.filter(
         jaar=year - 1, klas=previous_leerjaar
     ).first()
 
@@ -89,9 +91,10 @@ def get_se_weging(
 
     if toets_ed4 is None:
         return None
+    assert isinstance(toets_ed4, Toets)
 
-    numerator_ed4, denumerator_ed4 = parse_edx(toets_ed4.pct)
-    numerator_ed5, denumerator_ed5 = parse_edx(toets_ed5.pct or 0)
+    numerator_ed4, denumerator_ed4 = parse_edx(toets_ed4.pct or 0)
+    numerator_ed5, denumerator_ed5 = parse_edx((toets_ed5.pct or 0) if toets_ed5 else 0)
 
     denumerator = denumerator_ed4 * denumerator_ed5
 
