@@ -7,7 +7,7 @@
     "doc": "doc"
   },
   "scripts": {
-    "build": "gulp build"
+    "build": "gulp scss"
   },
   "repository": {
     "type": "git",
@@ -22,14 +22,13 @@
   "devDependencies": {
     "autoprefixer": "latest",
     "cssnano": "latest",
-    "eyeglass": "latest",
     "gulp": "latest",
     "gulp-hub": "latest",
-    "gulp-if": "latest",
     "gulp-postcss": "latest",
     "gulp-sass": "latest",
     "gulp-sourcemaps": "latest",
     "postcss-loader": "latest",
+    "sass": "^1.65.1",
     "sass-loader": "latest",
     "yargs": "latest"
   }

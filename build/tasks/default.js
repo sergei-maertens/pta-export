@@ -1,5 +1,5 @@
 const gulp = require('gulp');
-const {build} = require('./build');
+const {scss} = require('./scss');
 
-gulp.task('default', build);
-exports.default = build;
+gulp.task('default', scss);
+exports.default = scss;
