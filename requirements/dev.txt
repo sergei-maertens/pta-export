@@ -8,7 +8,7 @@ alabaster==0.7.12
     # via sphinx
 appdirs==1.4.3
     # via black
-asgiref==3.3.0
+asgiref==3.7.2
     # via
     #   -r requirements/ci.txt
     #   django
@@ -16,6 +16,10 @@ attrs==19.3.0
     # via black
 babel==2.8.0
     # via sphinx
+backports.zoneinfo==0.2.1
+    # via
+    #   -r requirements/ci.txt
+    #   django
 bcrypt==3.2.0
     # via -r requirements/ci.txt
 beautifulsoup4==4.9.0
@@ -47,40 +51,24 @@ cssselect==1.1.0
     # via
     #   -r requirements/ci.txt
     #   pyquery
-django==3.0.14
+django==4.2.4
     # via
     #   -r requirements/ci.txt
-    #   django-appconf
     #   django-axes
     #   django-choices
     #   django-debug-toolbar
     #   django-jenkins
     #   django-redis
     #   djangorestframework
-django-appconf==1.0.4
-    # via
-    #   -r requirements/ci.txt
-    #   django-axes
-django-axes==5.3.1
+django-axes[ipware]==6.1.0
     # via -r requirements/ci.txt
 django-choices==1.7.1
     # via -r requirements/ci.txt
-django-compat==1.0.15
-    # via
-    #   -r requirements/ci.txt
-    #   django-hijack
-    #   django-hijack-admin
-django-debug-toolbar==2.2
+django-debug-toolbar==4.2.0
     # via -r requirements/dev.in
 django-extensions==2.2.9
     # via -r requirements/dev.in
-django-hijack==2.1.10
-    # via
-    #   -r requirements/ci.txt
-    #   django-hijack-admin
-django-hijack-admin==2.1.10
-    # via -r requirements/ci.txt
-django-ipware==2.1.0
+django-ipware==5.0.0
     # via
     #   -r requirements/ci.txt
     #   django-axes
@@ -90,7 +78,7 @@ django-redis==4.11.0
     # via -r requirements/ci.txt
 django-webtest==1.9.7
     # via -r requirements/ci.txt
-djangorestframework==3.11.0
+djangorestframework==3.14.0
     # via -r requirements/ci.txt
 docutils==0.16
     # via sphinx
@@ -170,7 +158,7 @@ pytz==2020.1
     # via
     #   -r requirements/ci.txt
     #   babel
-    #   django
+    #   djangorestframework
 redis==3.5.1
     # via
     #   -r requirements/ci.txt
@@ -191,7 +179,6 @@ six==1.14.0
     #   -r requirements/ci.txt
     #   bcrypt
     #   django-choices
-    #   django-compat
     #   django-extensions
     #   freezegun
     #   packaging
@@ -239,6 +226,10 @@ tomli==1.2.1
     # via pep517
 typed-ast==1.4.1
     # via black
+typing-extensions==4.7.1
+    # via
+    #   -r requirements/ci.txt
+    #   asgiref
 urllib3==2.0.4
     # via
     #   -r requirements/ci.txt
@@ -264,7 +255,9 @@ wheel==0.37.0
 # The following packages are considered to be unsafe in a requirements file:
 pip==21.2.4
     # via pip-tools
-setuptools==58.2.0
+setuptools==68.1.0
     # via
+    #   -r requirements/ci.txt
+    #   django-axes
     #   pip-tools
     #   sphinx
