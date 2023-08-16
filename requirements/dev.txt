@@ -51,7 +51,7 @@ cssselect==1.1.0
     # via
     #   -r requirements/ci.txt
     #   pyquery
-django==4.2.4
+django==4.1.10
     # via
     #   -r requirements/ci.txt
     #   django-axes

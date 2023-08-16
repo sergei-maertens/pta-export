@@ -1,6 +1,5 @@
 import os
 
-# Django-hijack (and Django-hijack-admin)
 from django.urls import reverse_lazy
 
 from sentry_sdk.integrations import DidNotEnable, django, redis

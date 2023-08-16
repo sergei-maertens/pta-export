@@ -1,4 +1,4 @@
-{% load static hijack_tags %}<!DOCTYPE html>
+{% load static %}<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8">
@@ -8,13 +8,11 @@
         <meta name="author" content="">
 
         <link href="{% static 'css/screen.css' %}" media="screen" rel="stylesheet" type="text/css" />
-        <link href="{% static 'hijack/hijack-styles.css' %}" rel="stylesheet" type="text/css" />
         {% block extra_css %}{% endblock %}
         <link href="{% static 'ico/favicon.png' %}" rel="shortcut icon">
     </head>
 
     <body class="{% block body-class %}{% endblock %}">
-        {% hijack_notification %}
         <main>
             {% block content %}
                 Override <code>{% verbatim %}{% block content %}{% endverbatim %}</code>

@@ -31,7 +31,7 @@ coverage==4.5.4
     # via -r requirements/test-tools.in
 cssselect==1.1.0
     # via pyquery
-django==4.2.4
+django==4.1.10
     # via
     #   -r requirements/base.txt
     #   django-axes
