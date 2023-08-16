@@ -8,7 +8,7 @@ asgiref==3.3.0
     # via django
 bcrypt==3.2.0
     # via -r requirements/base.in
-certifi==2020.6.20
+certifi==2023.7.22
     # via sentry-sdk
 cffi==1.14.3
     # via bcrypt
@@ -73,9 +73,9 @@ six==1.14.0
     #   bcrypt
     #   django-choices
     #   django-compat
-sqlparse==0.3.1
+sqlparse==0.4.4
     # via django
-urllib3==1.26.7
+urllib3==2.0.4
     # via sentry-sdk
 uwsgi==2.0.18
     # via -r requirements/base.in
