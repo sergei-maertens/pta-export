@@ -98,7 +98,9 @@ RAW_TEMPLATE_LOADERS = (
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(DJANGO_PROJECT_DIR, "templates"),],
+        "DIRS": [
+            os.path.join(DJANGO_PROJECT_DIR, "templates"),
+        ],
         "APP_DIRS": False,  # conflicts with explicity specifying the loaders
         "OPTIONS": {
             "context_processors": [
@@ -125,9 +127,15 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",},
-    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",},
-    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",},
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+    },
 ]
 
 
@@ -191,14 +199,19 @@ LOGGING = {
             "format": "%(asctime)s %(process)d | %(thread)d | %(message)s",
         },
     },
-    "filters": {"require_debug_false": {"()": "django.utils.log.RequireDebugFalse"},},
+    "filters": {
+        "require_debug_false": {"()": "django.utils.log.RequireDebugFalse"},
+    },
     "handlers": {
         "mail_admins": {
             "level": "ERROR",
             "filters": ["require_debug_false"],
             "class": "django.utils.log.AdminEmailHandler",
         },
-        "null": {"level": "DEBUG", "class": "logging.NullHandler",},
+        "null": {
+            "level": "DEBUG",
+            "class": "logging.NullHandler",
+        },
         "console": {
             "level": "DEBUG",
             "class": "logging.StreamHandler",
@@ -230,7 +243,11 @@ LOGGING = {
         },
     },
     "loggers": {
-        "pta_export": {"handlers": ["project"], "level": "INFO", "propagate": True,},
+        "pta_export": {
+            "handlers": ["project"],
+            "level": "INFO",
+            "propagate": True,
+        },
         "django.request": {
             "handlers": ["django"],
             "level": "ERROR",
@@ -253,7 +270,7 @@ AUTH_USER_MODEL = "accounts.User"
 
 # Allow logging in with both username+password and email+password
 AUTHENTICATION_BACKENDS = [
-    "axes.backends.AxesStandaloneBackend",
+    "axes.backends.AxesBackend",
     "pta_export.accounts.backends.OCPTABackend",
     "pta_export.accounts.backends.UserModelEmailBackend",
     "django.contrib.auth.backends.ModelBackend",
@@ -287,7 +304,7 @@ REST_FRAMEWORK = {
 ADMIN_INDEX_SHOW_REMAINING_APPS = True
 ADMIN_INDEX_AUTO_CREATE_APP_GROUP = True
 
-# Django-Axes (4.0+)
+# Django-Axes
 #
 # The number of login attempts allowed before a record is created for the
 # failed logins. Default: 3
@@ -300,6 +317,7 @@ AXES_COOLOFF_TIME = 1
 # receives cooloff_time and failure_limit as context variables. Default: None
 AXES_LOCKOUT_TEMPLATE = "account_blocked.html"
 AXES_LOCKOUT_PARAMETERS = [["username", "ip_address", "user_agent"]]
+AXES_SENSITIVE_PARAMETERS = ["password", "auth-password"]  # nosec
 
 # The default meta precedence order
 IPWARE_META_PRECEDENCE_ORDER = (
