@@ -4,7 +4,6 @@ markdown
 mysqlclient  # database driver
 passlib
 psycopg2
-pytz  # handle timezones
 python-docx
 python-dotenv  # environment variables for secrets
 python-decouple  # processing of envvar configs
@@ -12,14 +11,10 @@ python-decouple  # processing of envvar configs
 # Framework libraries
 django~=4.2.0
 django-axes[ipware]
-django-choices
 django-redis
 
 # API libraries
 djangorestframework
-# django-extra-fields
-# django-filter
-# drf-yasg  # api documentation
 
 # WSGI servers & monitoring - production oriented
 uwsgi
