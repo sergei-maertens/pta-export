@@ -22,6 +22,7 @@ export UV_CUSTOM_COMPILE_COMMAND="./bin/compile_dependencies.sh"
 
 # Base (& prod) deps
 uv pip compile \
+    --output-file requirements/base.txt \
     "$@" \
     requirements/base.in
 
