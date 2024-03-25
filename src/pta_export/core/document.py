@@ -201,8 +201,8 @@ def add_header(document: Document, vak: Vak, year: int, leerjaar: int):
     header_p = document.add_paragraph()
     header_tab_stops = header_p.paragraph_format.tab_stops
     header_tab_stops.add_tab_stop(Cm(3))
-    header_tab_stops.add_tab_stop(Cm(16), alignment=WD_TAB_ALIGNMENT.RIGHT)
-    header_tab_stops.add_tab_stop(Cm(17.25))
+    header_tab_stops.add_tab_stop(Cm(22.71), alignment=WD_TAB_ALIGNMENT.RIGHT)
+    header_tab_stops.add_tab_stop(Cm(23.06))
 
     vak_naam = capfirst(html.unescape(vak.naam))
     if vak.afkorting and vak.weergeven == 1:
