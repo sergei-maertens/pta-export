@@ -2,34 +2,28 @@
   "name": "pta_export",
   "version": "1.0.0-alpha.0",
   "description": "pta_export project",
-  "main": "src/static/pta_export/js/pta_export.js",
+  "main": "",
   "directories": {
     "doc": "doc"
   },
   "scripts": {
-    "build": "gulp scss"
+    "build:scss:admin": "sass src/pta_export/sass/admin/admin_overrides.scss src/pta_export/static/css/admin/admin_overrides.css && postcss src/pta_export/static/css/admin/admin_overrides.css --replace --map",
+    "build:scss:ui": "sass src/pta_export/sass/screen.scss src/pta_export/static/css/screen.css && postcss src/pta_export/static/css/screen.css --replace --map",
+    "build": "npm-run-all build:scss:*"
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@bitbucket.org/maykinmedia/pta_export.git"
+    "url": "git+ssh://git@github.com/sergei-maertens/pta_export.git"
   },
-  "author": "Maykin Media",
+  "author": "Sergei Maertens",
   "license": "UNLICENSED",
-  "homepage": "https://maykinmedia.nl",
-  "dependencies": {
-    "microscope-sass": "latest"
-  },
+  "homepage": "https://regex-it.nl",
   "devDependencies": {
-    "autoprefixer": "latest",
-    "cssnano": "latest",
-    "gulp": "latest",
-    "gulp-hub": "latest",
-    "gulp-postcss": "latest",
-    "gulp-sass": "latest",
-    "gulp-sourcemaps": "latest",
-    "postcss-loader": "latest",
-    "sass": "^1.65.1",
-    "sass-loader": "latest",
-    "yargs": "latest"
+    "autoprefixer": "^10.4.19",
+    "cssnano": "^6.1.2",
+    "npm-run-all2": "^6.1.2",
+    "postcss": "^8.4.38",
+    "postcss-cli": "^11.0.0",
+    "sass": "^1.72.0"
   }
 }

@@ -25,16 +25,11 @@ RUN uv pip install --system -r requirements/production.txt
 
 
 # Stage 2 - Install frontend deps and build assets
-FROM node:13-buster AS frontend-build
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-        git \
-    && rm -rf /var/lib/apt/lists/*
+FROM node:20-bookworm-slim AS frontend-build
 
 WORKDIR /app
 
 # copy configuration/build files
-COPY ./build /app/build/
 COPY ./*.json ./*.js /app/
 
 # install WITH dev tooling
