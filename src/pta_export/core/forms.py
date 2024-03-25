@@ -6,7 +6,8 @@ from .models import Kalender
 
 class ExportForm(forms.Form):
     jaar = forms.IntegerField(
-        label="Jaar", help_text="Jaar in de kalendar om te exporteren",
+        label="Jaar",
+        help_text="Jaar in de kalender om te exporteren",
     )
     klas = forms.TypedChoiceField(
         label="klas",

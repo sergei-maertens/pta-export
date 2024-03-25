@@ -13,12 +13,13 @@ class ExportSerializer(serializers.Serializer):
         label="Jaar", required=True, help_text="Jaar in YYYY formaat, bv. 2019."
     )
     klas = serializers.ChoiceField(
-        label="klas", choices=[choice for choice in Leerjaren.choices if choice[0]],
+        label="klas",
+        choices=[choice for choice in Leerjaren.choices if choice[0]],
     )
 
     def validate_jaar(self, value: int):
         if not Kalender.objects.filter(jaar=value).exists():
-            raise serializers.ValidationError("Er bestaat geen kalendar voor dit jaar.")
+            raise serializers.ValidationError("Er bestaat geen kalender voor dit jaar.")
         return value
 
 
