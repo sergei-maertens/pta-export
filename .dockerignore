@@ -8,3 +8,4 @@ env/
 local.py
 media/
 private_media/
+src/pta_export/static/css/*
