@@ -279,7 +279,7 @@ def add_vak_regular(
 
                 if content.inleverdatum:
                     datum_par = cell.add_paragraph(text=content.inleverdatum)
-                    datum_par.runs[0].font.size = Pt(9)
+                    datum_par.runs[0].font.size = Pt(8)
                     datum_par.runs[0].italic = True
     _style_table_cells(table)
 
@@ -351,9 +351,19 @@ def iter_oude_toets_columns(oude_toets: Optional[Toets]):
 
 
 def add_vak_overstappers_vwo5(
-    document: Document, logo_path: str, vak: Vak, year: int, leerjaar: int,
+    document: Document,
+    logo_path: str,
+    vak: Vak,
+    year: int,
+    leerjaar: int,
 ):
-    render_vak = any((vak.overnemen_herwaarderen, vak.inhalen, vak.inhaalopdrachten,))
+    render_vak = any(
+        (
+            vak.overnemen_herwaarderen,
+            vak.inhalen,
+            vak.inhaalopdrachten,
+        )
+    )
     if not render_vak:
         return
 
@@ -458,7 +468,11 @@ def add_vak_overstappers_vwo5(
 
 
 def add_vak_overstappers_vwo6(
-    document: Document, logo_path: str, vak: Vak, year: int, leerjaar: int,
+    document: Document,
+    logo_path: str,
+    vak: Vak,
+    year: int,
+    leerjaar: int,
 ) -> None:
     if not vak.h5_toetsen:
         return
