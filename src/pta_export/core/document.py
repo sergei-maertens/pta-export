@@ -19,11 +19,11 @@ from .utils import get_weging_text
 
 LEERJAAR_WEGING = {
     Leerjaren.vwo_3: ("Weging", "weging_r4"),
-    Leerjaren.havo_4: ("Weging ED4", "weging_ed4"),
-    Leerjaren.vwo_4: ("Weging ED4", "weging_ed4"),
-    Leerjaren.havo_5: ("Weging ED5", "weging_ed5"),
-    Leerjaren.vwo_5: ("Weging ED5", "weging_ed5"),
-    Leerjaren.vwo_6: ("Weging ED6", "weging_ed6"),
+    Leerjaren.havo_4: ("Weging SE", "weging_ed4"),
+    Leerjaren.vwo_4: ("Weging SE", "weging_ed4"),
+    Leerjaren.havo_5: ("Weging SE", "weging_ed5"),
+    Leerjaren.vwo_5: ("Weging SE", "weging_ed5"),
+    Leerjaren.vwo_6: ("Weging SE", "weging_ed6"),
 }
 
 HIDE_DOMEIN = {Leerjaren.vwo_3}
@@ -385,7 +385,7 @@ def add_vak_overstappers_vwo5(
             "Omschrijving",
             "Domein",
             "Overnemen/Herwaarderen",
-            "Weging ED4",
+            "Weging SE",
         ]
         table_data = [
             [
@@ -414,7 +414,7 @@ def add_vak_overstappers_vwo5(
         if vak.overnemen_herwaarderen:
             paragraph.paragraph_format.space_before = Pt(10)
 
-        header = ["Code H4", "Jaar", "Omschrijving", "Domein", "Weging ED4"]
+        header = ["Code H4", "Jaar", "Omschrijving", "Domein", "Weging SE"]
         table_data = [
             [
                 overstap.oude_toets.code,
@@ -444,7 +444,7 @@ def add_vak_overstappers_vwo5(
         if vak.overnemen_herwaarderen or vak.inhalen:
             paragraph.paragraph_format.space_before = Pt(10)
 
-        header = ["Code H4", "Jaar", "Omschrijving", "Domein", "Weging ED4"]
+        header = ["Code H4", "Jaar", "Omschrijving", "Domein", "Weging SE"]
         table_data = [
             [
                 toets.code,
