@@ -21,7 +21,7 @@ click==8.1.7
 coverage==4.5.4
 cssselect==1.2.0
     # via pyquery
-django==4.2.11
+django==4.1.13
     # via
     #   django-axes
     #   django-debug-toolbar
