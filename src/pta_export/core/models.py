@@ -2,7 +2,7 @@ from typing import List
 
 from django.db import models
 
-from .constants import Leerjaren, OverstapActies, Types
+from .constants import Leerjaren, OverstapActies, Sorteringen, Types
 from .fields import IntegerDateField, Latin1ButActuallyCP1252CharField
 
 TOETSWEEK_FIELDS = (
@@ -72,7 +72,10 @@ class Overstap(models.Model):
     id = models.AutoField(db_column="OCO_ID", primary_key=True)
     jaar = models.IntegerField(db_column="OCO_Jaar", blank=True, null=True)
     klas = models.IntegerField(
-        db_column="OCO_Klas", choices=Leerjaren.choices, blank=True, null=True,
+        db_column="OCO_Klas",
+        choices=Leerjaren.choices,
+        blank=True,
+        null=True,
     )
     vak = models.ForeignKey(
         "Vak", db_column="OCO_Vak", blank=True, null=True, on_delete=models.SET_NULL
@@ -125,7 +128,10 @@ class Toets(models.Model):
         "User", db_column="OCT_User", blank=True, null=True, on_delete=models.SET_NULL
     )
     type = models.IntegerField(
-        db_column="OCT_Type", choices=Types.choices, blank=True, null=True,
+        db_column="OCT_Type",
+        choices=Types.choices,
+        blank=True,
+        null=True,
     )
     code = models.CharField(db_column="OCT_Code", max_length=6, blank=True, null=True)
     omschrijving = Latin1ButActuallyCP1252CharField(
@@ -147,6 +153,7 @@ class Toets(models.Model):
         on_delete=models.SET_NULL,
     )
     tijd = models.IntegerField(db_column="OCT_Tijd", blank=True, null=True)
+    weging_ed3 = models.IntegerField(db_column="OCT_Weging_ED3", blank=True, null=True)
     weging_ed4 = models.IntegerField(db_column="OCT_Weging_ED4", blank=True, null=True)
     weging_ed5 = models.IntegerField(db_column="OCT_Weging_ED5", blank=True, null=True)
     weging_ed6 = models.IntegerField(db_column="OCT_Weging_ED6", blank=True, null=True)
@@ -156,6 +163,7 @@ class Toets(models.Model):
     voetnoot = models.CharField(
         db_column="OCT_Voetnoot", max_length=150, blank=True, null=True
     )
+    wegingv = models.IntegerField(db_column="OCT_WegingV", blank=True, null=True)
     vbijt = models.IntegerField(db_column="OCT_VbijT")
 
     class Meta:
@@ -203,9 +211,16 @@ class Vak(models.Model):
     afkorting = models.CharField(
         db_column="OCV_Afkorting", max_length=5, blank=True, null=True
     )
+    sector = models.IntegerField(db_column="OCV_Sector", blank=True, null=True)
+    sortering = models.IntegerField(
+        db_column="OCV_Sortering",
+        choices=Sorteringen.choices,
+        blank=True,
+        null=True,
+    )
     weergeven = models.IntegerField(db_column="OCV_Weergeven", blank=True, null=True)
     leerjaren = models.CharField(
-        db_column="OCV_Leerjaren", max_length=8, blank=True, null=True
+        db_column="OCV_Leerjaren", max_length=40, blank=True, null=True
     )
 
     class Meta:

@@ -58,7 +58,7 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(Vak)
 class VakAdmin(admin.ModelAdmin):
-    list_display = ("naam", "afkorting", "leerjaren", "weergeven")
+    list_display = ("naam", "afkorting", "leerjaren", "weergeven", "sortering")
     search_fields = ("naam", "afkorting")
 
 
