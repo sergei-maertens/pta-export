@@ -2,13 +2,13 @@ import logging
 from typing import Iterable
 
 from django.contrib.staticfiles.storage import staticfiles_storage
-from django.db.models import Prefetch
+from django.db.models import Case, F, Prefetch, When
 from django.db.models.functions import Lower
 from django.utils import translation
 
 from docx import Document
 
-from .constants import Leerjaren, OverstapActies
+from .constants import Leerjaren, OverstapActies, Sorteringen, Types
 from .document import add_vak, initialize_document
 from .models import Kalender, Overstap, Toets, Vak, Voetnoot
 
@@ -20,7 +20,22 @@ def export(year: int, leerjaar: int) -> Document:
     toetsen = (
         Toets.objects.select_related("soortwerk")
         .filter(jaar=year, klas=leerjaar)
-        .order_by("lesweek")
+        .order_by(
+            # first field to order on
+            Case(
+                When(vak__sortering=Sorteringen.chronological, then=F("lesweek")),
+                When(vak__sortering=Sorteringen.by_type, then=F("type")),
+                default=F("lesweek"),
+            ),
+            # second field to order on
+            Case(
+                When(vak__sortering=Sorteringen.chronological, then=F("type")),
+                When(vak__sortering=Sorteringen.by_type, then=F("lesweek")),
+                default=F("lesweek"),
+            ),
+            # and lastly, order on code
+            F("code"),
+        )
     )
     voetnoten = Voetnoot.objects.order_by("id")
     overstappen = (
@@ -48,7 +63,9 @@ def export(year: int, leerjaar: int) -> Document:
             to_attr="inhalen",
         ),
         Prefetch(
-            "toets_set", queryset=toetsen.filter(type=8), to_attr="inhaalopdrachten",
+            "toets_set",
+            queryset=toetsen.filter(type=Types.ED6),
+            to_attr="inhaalopdrachten",
         ),
         Prefetch(
             "toets_set",
@@ -72,7 +89,11 @@ def export(year: int, leerjaar: int) -> Document:
     return doc
 
 
-def create_document(year: int, leerjaar: int, vakken: Iterable[Vak],) -> Document:
+def create_document(
+    year: int,
+    leerjaar: int,
+    vakken: Iterable[Vak],
+) -> Document:
     toetsweek_periodes = Kalender.objects.get(jaar=year).toetsweek_periodes
     logo_path = staticfiles_storage.path("img/logopta.jpg")
 

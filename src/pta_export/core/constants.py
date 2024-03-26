@@ -80,3 +80,8 @@ class OverstapActies(models.IntegerChoices):
     herwaarderen = 2, "herwaarderen"
     inhalen = 3, "inhalen"
     meemaken = 4, "meemaken met H5"
+
+
+class Sorteringen(models.IntegerChoices):
+    chronological = 1, "chronologisch"
+    by_type = 2, "op type"
