@@ -13,7 +13,7 @@ from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls
 from docx.shared import Cm, Mm, Pt
 
-from .constants import Leerjaren
+from .constants import ExportModes, Leerjaren
 from .models import Toets, Vak
 from .utils import get_weging_text
 
@@ -88,8 +88,10 @@ def add_vak(
 ) -> None:
     if leerjaar not in (Leerjaren.overstappers_vwo_5, Leerjaren.overstappers_vwo_6):
         add_vak_regular(document, logo_path, vak, year, leerjaar, toetsweek_periodes)
+    # Klas 6
     elif leerjaar == Leerjaren.overstappers_vwo_5:
         add_vak_overstappers_vwo5(document, logo_path, vak, year, leerjaar)
+    # Klas 7
     elif leerjaar == Leerjaren.overstappers_vwo_6:
         add_vak_overstappers_vwo6(document, logo_path, vak, year, leerjaar)
 
@@ -357,19 +359,33 @@ def add_vak_overstappers_vwo5(
     year: int,
     leerjaar: int,
 ):
-    render_vak = any(
-        (
-            vak.overnemen_herwaarderen,
-            vak.inhalen,
-            vak.inhaalopdrachten,
-        )
-    )
-    if not render_vak:
-        return
+    match vak.export_bit:
+        case ExportModes.no_export.value:
+            return
+        case ExportModes.table.value:
+            render_vak = any(
+                (
+                    vak.overnemen_herwaarderen,  # type: ignore
+                    vak.inhalen,  # type: ignore
+                    vak.inhaalopdrachten,  # type: ignore
+                )
+            )
+            if not render_vak:
+                return
+            # otherwise, do the old behaviour after the pattern match
+        case ExportModes.remark_completed_earlier.value:
+            add_header(document, vak, year, leerjaar)
+            paragraph = document.add_paragraph(
+                "De leerling heeft dit vak in een eerder stadium al afgerond op Vwo "
+                "niveau. De eindbeoordeling van dit vak wordt meegenomen."
+            )
+            # try to set global font name
+            _set_default_font(paragraph)
+            return
 
     add_header(document, vak, year, leerjaar)
 
-    if vak.overnemen_herwaarderen:
+    if vak.overnemen_herwaarderen:  # type: ignore
 
         paragraph = document.add_paragraph(
             "De volgende al gemaakte onderdelen worden meegenomen uit "
@@ -474,6 +490,32 @@ def add_vak_overstappers_vwo6(
     year: int,
     leerjaar: int,
 ) -> None:
+    match vak.export_bit:
+        case ExportModes.no_export.value:
+            return
+        case ExportModes.table.value:
+            if not vak.h5_toetsen:
+                return
+            # otherwise, do the old behaviour after the pattern match
+        case ExportModes.remark_completed_earlier.value:
+            add_header(document, vak, year, leerjaar)
+            paragraph = document.add_paragraph(
+                "De leerling heeft dit vak in een eerder stadium afgesloten op Vwo "
+                "niveau"
+            )
+            # try to set global font name
+            _set_default_font(paragraph)
+            return
+        case ExportModes.remark_vwo.value:
+            add_header(document, vak, year, leerjaar)
+            paragraph = document.add_paragraph(
+                "De leerling rond dit vak af op Vwo niveau. Eventuele openstaande "
+                "opdrachten in het Vwo 6 PTA moeten worden afgerond."
+            )
+            # try to set global font name
+            _set_default_font(paragraph)
+            return
+
     if not vak.h5_toetsen:
         return
 

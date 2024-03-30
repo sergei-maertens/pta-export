@@ -64,8 +64,7 @@ class VakAdmin(admin.ModelAdmin):
 
     @admin.display(description="exportmode")
     def export_mode(self, obj: Vak) -> str:
-        magic_bit = obj.leerjaren[6]
-        return ExportModes(magic_bit).label
+        return ExportModes(obj.export_bit).label
 
 
 @admin.register(Voetnoot)

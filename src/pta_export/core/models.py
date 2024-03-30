@@ -231,6 +231,11 @@ class Vak(models.Model):
     def __str__(self):
         return self.naam
 
+    @property
+    def export_bit(self) -> str:
+        magic_bit = self.leerjaren[6]
+        return magic_bit
+
 
 class Voetnoot(models.Model):
     id = models.AutoField(db_column="OCVN_ID", primary_key=True)
