@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.admin import widgets
 
+from .constants import ExportModes
 from .fields import IntegerDateField
 from .models import Kalender, Overstap, Toets, User, Vak, Voetnoot, Werk
 
@@ -58,8 +59,13 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(Vak)
 class VakAdmin(admin.ModelAdmin):
-    list_display = ("naam", "afkorting", "leerjaren", "weergeven", "sortering")
+    list_display = ("naam", "afkorting", "export_mode", "weergeven", "sortering")
     search_fields = ("naam", "afkorting")
+
+    @admin.display(description="exportmode")
+    def export_mode(self, obj: Vak) -> str:
+        magic_bit = obj.leerjaren[6]
+        return ExportModes(magic_bit).label
 
 
 @admin.register(Voetnoot)

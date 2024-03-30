@@ -85,3 +85,10 @@ class OverstapActies(models.IntegerChoices):
 class Sorteringen(models.IntegerChoices):
     chronological = 1, "chronologisch"
     by_type = 2, "op type"
+
+
+class ExportModes(models.TextChoices):
+    no_export = "0", "niet exporteren"
+    table = "1", "tabel exporteren"
+    remark_completed_earlier = "2", "opmerking eerder afgerond"
+    remark_vwo = "3", "opmerking afronding op VWO niveau"
