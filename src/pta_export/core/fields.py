@@ -23,4 +23,9 @@ class IntegerDateField(models.IntegerField):
         return "" if val is None else val.isoformat()
 
     def formfield(self, **kwargs):
-        return super().formfield(**{"form_class": forms.DateField, **kwargs,})
+        return super().formfield(
+            **{
+                "form_class": forms.DateField,
+                **kwargs,
+            }
+        )
