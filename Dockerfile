@@ -51,6 +51,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-reco
         procps \
         mime-support \
         postgresql-client \
+        libmariadb3 \
         gettext \
         shared-mime-info \
     && rm -rf /var/lib/apt/lists/*
