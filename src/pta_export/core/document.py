@@ -381,6 +381,7 @@ def add_vak_overstappers_vwo5(
             )
             # try to set global font name
             _set_default_font(paragraph)
+            document.add_page_break()
             return
 
     add_header(document, vak, year, leerjaar)
@@ -505,6 +506,7 @@ def add_vak_overstappers_vwo6(
             )
             # try to set global font name
             _set_default_font(paragraph)
+            document.add_page_break()
             return
         case ExportModes.remark_vwo.value:
             add_header(document, vak, year, leerjaar)
@@ -514,6 +516,7 @@ def add_vak_overstappers_vwo6(
             )
             # try to set global font name
             _set_default_font(paragraph)
+            document.add_page_break()
             return
 
     if not vak.h5_toetsen:
