@@ -54,7 +54,7 @@ class ToetsAdmin(admin.ModelAdmin):
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ("naam", "email", "actief", "access", "sector")
+    list_display = ("naam", "afkorting", "email", "actief", "access", "sector")
     search_fields = ("email", "naam")
     list_filter = ("access", "sector")
 
