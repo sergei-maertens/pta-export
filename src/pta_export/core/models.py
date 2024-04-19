@@ -2,7 +2,14 @@ from typing import List
 
 from django.db import models
 
-from .constants import Leerjaren, OverstapActies, Sorteringen, Types
+from .constants import (
+    AccessModes,
+    Leerjaren,
+    OverstapActies,
+    Sectoren,
+    Sorteringen,
+    Types,
+)
 from .fields import IntegerDateField, Latin1ButActuallyCP1252CharField
 
 TOETSWEEK_FIELDS = (
@@ -193,7 +200,15 @@ class User(models.Model):
     vak4 = models.IntegerField(db_column="OCU_Vak4", blank=True, null=True)
     vak5 = models.IntegerField(db_column="OCU_Vak5", blank=True, null=True)
     actief = models.IntegerField(db_column="OCU_Actief", blank=True, null=True)
-    access = models.IntegerField(db_column="OCU_Access", blank=True, null=True)
+    access = models.IntegerField(
+        db_column="OCU_Access",
+        blank=True,
+        null=True,
+        choices=AccessModes.choices,
+    )
+    sector = models.IntegerField(
+        db_column="OCU_Sector", blank=True, null=True, choices=Sectoren.choices
+    )  # Field name made lowercase.
     lastlogin = models.IntegerField(db_column="OCU_LastLogin", blank=True, null=True)
 
     class Meta:

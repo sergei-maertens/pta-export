@@ -37,9 +37,9 @@ class Leerjaren(models.IntegerChoices):
     vwo_6 = 5, "6 vwo"
     overstappers_vwo_5 = 6, "overstappers vwo 5"
     overstappers_vwo_6 = 7, "overstappers vwo 6"
-    have_vwo_1 = 11, "1 havo/vwo"
+    havo_vwo_1 = 11, "1 havo/vwo"
     gym_ath_1 = 12, "1 gynmasium/atheneum"
-    have_vwo_2 = 13, "2 havo/vwo"
+    havo_vwo_2 = 13, "2 havo/vwo"
     gym_ath_2 = 14, "2 gynmasium/atheneum"
     havo_3 = 15, "3 havo"
     gym_ath_3 = 16, "3 gymnasium/atheneum"  # vwo_3 before
@@ -110,3 +110,15 @@ class ExportModes(models.TextChoices):
     table = "1", "tabel exporteren"
     remark_completed_earlier = "2", "opmerking eerder afgerond"
     remark_vwo = "3", "opmerking afronding op VWO niveau"
+
+
+class AccessModes(models.IntegerChoices):
+    export_any = 1, "export: alle klassen"
+    export_by_sector = 2, "export: adhv sector"
+    # there are more but not relevant for us
+
+
+class Sectoren(models.IntegerChoices):
+    onderbouw = 1, "onderbouw havo/vwo"
+    bovenbouw = 2, "bovenbouw havo/vwo"
+    vmbo = 3, "vmbo"
