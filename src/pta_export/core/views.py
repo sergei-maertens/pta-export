@@ -31,6 +31,11 @@ class ExportView(LoginRequiredMixin, FormView):
     form_class = ExportForm
     template_name = "export.html"
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["pta_user"] = self.request.pta_user
+        return kwargs
+
     def form_valid(self, form: ExportForm):
         jaar = form.cleaned_data["jaar"]
         leerjaar = form.cleaned_data["klas"]

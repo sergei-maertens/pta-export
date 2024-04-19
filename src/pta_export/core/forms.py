@@ -1,7 +1,8 @@
 from django import forms
 
 from .constants import Leerjaren
-from .models import Kalender
+from .models import Kalender, User as PtaUser
+from .permissions import get_allowed_leerjaren
 
 
 class ExportForm(forms.Form):
@@ -15,6 +16,15 @@ class ExportForm(forms.Form):
         help_text="Selecteer de klas om te exporteren.",
         coerce=int,
     )
+
+    def __init__(self, *args, **kwargs):
+        pta_user: PtaUser | None = kwargs.pop("pta_user")
+        super().__init__(*args, **kwargs)
+
+        leerjaren_choices = get_allowed_leerjaren(pta_user)
+        self.fields["klas"].choices = [
+            (choice.value, choice.label) for choice in leerjaren_choices
+        ]
 
     def clean_jaar(self):
         jaar = self.cleaned_data["jaar"]

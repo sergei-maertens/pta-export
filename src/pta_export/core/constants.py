@@ -57,6 +57,18 @@ class Leerjaren(models.IntegerChoices):
     kader_4 = 33, "4 kader"
     tl_4 = 34, "4 theoretisch"
 
+    @classmethod
+    def get_bovenbouw_havo_vwo(cls):
+        return [member for member in cls if 1 <= member.value <= 10]
+
+    @classmethod
+    def get_onderbouw_havo_vwo(cls):
+        return [member for member in cls if 11 <= member.value <= 20]
+
+    @classmethod
+    def get_vmbo(cls):
+        return [member for member in cls if 21 <= member.value <= 40]
+
 
 class Types(models.IntegerChoices):
     empty = 0, ""
