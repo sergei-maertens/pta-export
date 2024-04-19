@@ -5,6 +5,12 @@
 
 {% block content %}
 <article class="content">
+    <h1>PTA exporteren</h1>
+
+    {% if request.pta_user %}
+        Welkom, {{ request.pta_user.naam }}
+    {% endif %}
+
     <form action="." method="post">
         {% csrf_token %}
         {{ form.as_p }}
