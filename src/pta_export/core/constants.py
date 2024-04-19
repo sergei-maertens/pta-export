@@ -30,14 +30,44 @@ class Dagen(models.IntegerChoices):
 
 class Leerjaren(models.IntegerChoices):
     empty = 0, ""
-    havo_4 = 1, "4 Havo"
-    havo_5 = 2, "5 Havo"
-    vwo_3 = 16, "3 VWO"
-    vwo_4 = 3, "4 VWO"
-    vwo_5 = 4, "5 VWO"
-    vwo_6 = 5, "6 VWO"
-    overstappers_vwo_5 = 6, "overstappers VWO 5"
-    overstappers_vwo_6 = 7, "overstappers VWO 6"
+    havo_4 = 1, "4 havo"
+    havo_5 = 2, "5 havo"
+    vwo_4 = 3, "4 vwo"
+    vwo_5 = 4, "5 vwo"
+    vwo_6 = 5, "6 vwo"
+    overstappers_vwo_5 = 6, "overstappers vwo 5"
+    overstappers_vwo_6 = 7, "overstappers vwo 6"
+    havo_vwo_1 = 11, "1 havo/vwo"
+    gym_ath_1 = 12, "1 gynmasium/atheneum"
+    havo_vwo_2 = 13, "2 havo/vwo"
+    gym_ath_2 = 14, "2 gynmasium/atheneum"
+    havo_3 = 15, "3 havo"
+    gym_ath_3 = 16, "3 gymnasium/atheneum"  # vwo_3 before
+    lo_1 = 21, "1 leerwegondersteunend"
+    bk_1 = 22, "1 basis/kader"
+    tl_havo_1 = 23, "1 TL/havo"
+    lo_2 = 24, "2 leerwegondersteunend"
+    bk_2 = 25, "2 basis/kader"
+    tl_havo_2 = 26, "2 TL/havo"
+    lwt_3 = 27, "3 leerwerktraject"
+    basis_3 = 28, "3 basis"
+    kader_3 = 29, "3 kader"
+    tl_3 = 30, "3 theoretisch"
+    basis_4 = 32, "4 basis"
+    kader_4 = 33, "4 kader"
+    tl_4 = 34, "4 theoretisch"
+
+    @classmethod
+    def get_bovenbouw_havo_vwo(cls):
+        return [member for member in cls if 1 <= member.value <= 10]
+
+    @classmethod
+    def get_onderbouw_havo_vwo(cls):
+        return [member for member in cls if 11 <= member.value <= 20]
+
+    @classmethod
+    def get_vmbo(cls):
+        return [member for member in cls if 21 <= member.value <= 40]
 
 
 class Types(models.IntegerChoices):
@@ -92,3 +122,15 @@ class ExportModes(models.TextChoices):
     table = "1", "tabel exporteren"
     remark_completed_earlier = "2", "opmerking eerder afgerond"
     remark_vwo = "3", "opmerking afronding op VWO niveau"
+
+
+class AccessModes(models.IntegerChoices):
+    export_any = 1, "export: alle klassen"
+    export_by_sector = 2, "export: adhv sector"
+    # there are more but not relevant for us
+
+
+class Sectoren(models.IntegerChoices):
+    onderbouw = 1, "onderbouw havo/vwo"
+    bovenbouw = 2, "bovenbouw havo/vwo"
+    vmbo = 3, "vmbo"

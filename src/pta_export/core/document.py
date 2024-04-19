@@ -18,7 +18,7 @@ from .models import Toets, Vak
 from .utils import get_weging_text
 
 LEERJAAR_WEGING = {
-    Leerjaren.vwo_3: ("Weging", "weging_r4"),
+    Leerjaren.gym_ath_3: ("Weging", "weging_r4"),
     Leerjaren.havo_4: ("Weging SE", "weging_ed4"),
     Leerjaren.vwo_4: ("Weging SE", "weging_ed4"),
     Leerjaren.havo_5: ("Weging SE", "weging_ed5"),
@@ -26,7 +26,7 @@ LEERJAAR_WEGING = {
     Leerjaren.vwo_6: ("Weging SE", "weging_ed6"),
 }
 
-HIDE_DOMEIN = {Leerjaren.vwo_3}
+HIDE_DOMEIN = {Leerjaren.gym_ath_3}
 
 
 R4_LEERJAREN = (
@@ -48,7 +48,7 @@ COLUMN_WIDTHS = {
 }
 
 COLUMN_WIDTHS_PER_LEERJAAR = {
-    Leerjaren.vwo_3: {
+    Leerjaren.gym_ath_3: {
         0: Cm(1.51),
         1: Cm(10.43),
         2: Cm(1.75),
@@ -210,7 +210,7 @@ def add_header(document: Document, vak: Vak, year: int, leerjaar: int):
     if vak.afkorting and vak.weergeven == 1:
         vak_naam = f"{vak_naam} ({vak.afkorting})"
 
-    prefix = "PTB" if leerjaar == Leerjaren.vwo_3 else "PTA"
+    prefix = "PTB" if leerjaar == Leerjaren.gym_ath_3 else "PTA"
     header_run = header_p.add_run(f"{prefix}\t{vak_naam}\t{_leerjaar}\t{school_year}")
     # header_run.font.name = "Arial"
     header_run.font.size = Pt(14)
