@@ -183,7 +183,7 @@ class Toets(models.Model):
         verbose_name_plural = "toetsen"
 
     def __str__(self):
-        return f"{self.jaar} - {self.klas} - {self.vak}"
+        return f"{self.jaar} - {self.klas} - {self.vak} (ID: {self.pk})"
 
 
 class User(models.Model):
