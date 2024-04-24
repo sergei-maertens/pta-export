@@ -83,16 +83,22 @@ def add_vak(
     vak: Vak,
     year: int,
     leerjaar: int,
-    toetsweek_periodes: Dict[int, List[int]],
+    toetsweek_periodes: dict[int, list[int]],
 ) -> None:
-    if leerjaar not in (Leerjaren.overstappers_vwo_5, Leerjaren.overstappers_vwo_6):
-        add_vak_regular(document, logo_path, vak, year, leerjaar, toetsweek_periodes)
-    # Klas 6
-    elif leerjaar == Leerjaren.overstappers_vwo_5:
-        add_vak_overstappers_vwo5(document, logo_path, vak, year, leerjaar)
-    # Klas 7
-    elif leerjaar == Leerjaren.overstappers_vwo_6:
-        add_vak_overstappers_vwo6(document, logo_path, vak, year, leerjaar)
+    match leerjaar:
+        # Klas 6
+        case Leerjaren.overstappers_vwo_5:
+            add_vak_overstappers_vwo5(document, logo_path, vak, year, leerjaar)
+        # Klas 7
+        case Leerjaren.overstappers_vwo_6:
+            add_vak_overstappers_vwo6(document, logo_path, vak, year, leerjaar)
+        case Leerjaren.tl_3 | Leerjaren.tl_4:
+            add_vak_tl(document, vak, year, leerjaar, toetsweek_periodes)
+        # Default
+        case _:
+            add_vak_regular(
+                document, logo_path, vak, year, leerjaar, toetsweek_periodes
+            )
 
 
 @dataclass
@@ -118,11 +124,25 @@ def clean_text(text: str) -> str:
     return html.unescape(normalize_newlines(text).strip())
 
 
+def get_periode_and_week(
+    toets: Toets, toetsweek_periodes: dict[int, list[int]]
+) -> tuple[str, str]:
+    toetsweken = sum(toetsweek_periodes.values(), [])
+
+    periode = toets.periode
+    week = toets.week or ""
+
+    if toets.week in toetsweken:
+        periode = f"{periode} (tw)"
+        week = "/".join([str(wk) for wk in toetsweek_periodes[toets.periode]])
+
+    return str(periode), week
+
+
 def get_toets_table(
     leerjaar: int,
     vak: Vak,
-    toetsweek_periodes: Dict[int, List[int]],
-    toetsweken: List[int],
+    toetsweek_periodes: dict[int, list[int]],
     weging: Optional[Tuple[str, str]],
 ) -> List[List[str]]:
     header = [
@@ -147,12 +167,7 @@ def get_toets_table(
     rows = []
 
     for toets in vak.toetsen:
-        periode = toets.periode
-        week = toets.week or ""
-
-        if toets.week in toetsweken:
-            periode = f"{periode} (tw)"
-            week = "/".join([str(wk) for wk in toetsweek_periodes[toets.periode]])
+        periode, week = get_periode_and_week(toets, toetsweek_periodes)
 
         if toets.inleverdatum:
             formatted = format_date(toets.inleverdatum, "j F Y")
@@ -195,7 +210,7 @@ def get_toets_table(
 
 
 def add_header(document: Document, vak: Vak, year: int, leerjaar: int):
-    _leerjaar = dict(Leerjaren.choices)[leerjaar]
+    _leerjaar = Leerjaren(leerjaar).label
     school_year = f"{year}-{year + 1}"
 
     # set up the table header
@@ -222,14 +237,13 @@ def add_vak_regular(
     vak: Vak,
     year: int,
     leerjaar: int,
-    toetsweek_periodes: Dict[int, List[int]],
+    toetsweek_periodes: dict[int, List[int]],
 ):
     if not vak.toetsen:
         return
 
     section = document.sections[-1]
 
-    toetsweken = sum(toetsweek_periodes.values(), [])
     weging = LEERJAAR_WEGING.get(leerjaar)
 
     add_header(document, vak, year, leerjaar)
@@ -243,9 +257,7 @@ def add_vak_regular(
     _set_default_font(paragraph)
 
     Omschrijving.reset_counter()
-    [header, *rows] = get_toets_table(
-        leerjaar, vak, toetsweek_periodes, toetsweken, weging
-    )
+    [header, *rows] = get_toets_table(leerjaar, vak, toetsweek_periodes, weging)
 
     table = document.add_table(rows=len(rows) + 1, cols=len(header))
     _set_default_table_style(table)
@@ -580,8 +592,72 @@ def add_vak_overstappers_vwo6(
     document.add_page_break()
 
 
+def add_vak_tl(
+    document: Document,
+    vak: Vak,
+    year: int,
+    leerjaar: int,
+    toetsweek_periodes: dict[int, list[int]],
+) -> None:
+    toetsen: list[Toets]
+    if not (toetsen := vak.toetsen):
+        return
+
+    add_header(document, vak, year, leerjaar)
+
+    type_map = {
+        3: "schriftelijk",
+        4: "praktisch",
+        5: "handelingsdeel",
+    }
+
+    weging_map = {
+        Leerjaren.tl_3: lambda t: t.weging_ed3,
+        Leerjaren.tl_4: lambda t: t.weging_ed4,
+    }
+
+    table_data = [
+        [
+            toets.code,
+            clean_text(toets.omschrijving),
+            toets.domein or "",
+            get_periode_and_week(toets, toetsweek_periodes)[0],
+            toets.get_herkansbaar_display(),
+            type_map.get(toets.type) or "",  # does not follow regular enum...
+            str(toets.tijd) or "",
+            str(weging_map[leerjaar](toets)) if leerjaar in weging_map else "",
+        ]
+        for toets in toetsen
+    ]
+
+    header = [
+        "Code",
+        "Onderwerp/Omschrijving",
+        "Eind-\ntermen",
+        "Periode",
+        "Herkansbaar",
+        "Soort werk",
+        "Tijd\n(min)",
+        "Weging SE",
+    ]
+    WIDTHS = {
+        0: Cm(1.51),
+        1: Cm(10.43),
+        2: Cm(2.00),
+        3: Cm(1.50),
+        4: Cm(2.00),
+        5: Cm(3.00),
+        6: Cm(1.50),
+        7: Cm(2.50),
+    }
+
+    create_table(document, header, table_data, index_no_center=1, widths=WIDTHS)
+
+    document.add_page_break()
+
+
 def create_table(
-    document, header, table_data, widths: Dict[int, Cm], index_no_center: int = 1
+    document, header, table_data, widths: dict[int, Cm], index_no_center: int = 1
 ):
     table = document.add_table(rows=len(table_data) + 1, cols=len(header))
     _set_default_table_style(table)
