@@ -15,7 +15,6 @@ from docx.shared import Cm, Mm, Pt
 
 from .constants import ExportModes, Leerjaren
 from .models import Toets, Vak
-from .utils import get_weging_text
 
 LEERJAAR_WEGING = {
     Leerjaren.gym_ath_3: ("Weging", "weging_r4"),
@@ -306,19 +305,13 @@ def add_vak_regular(
             cell.width = column.width
 
     # REMARKS, below the table
-    weging_text = get_weging_text(year, leerjaar, vak)
     toets_voetnoot_content = [x for x in toets_content if x.voetnoot]
     vak_voetnoten = [voetnoot.noot for voetnoot in vak.voetnoten]
 
-    if weging_text or toets_voetnoot_content or vak_voetnoten:
+    if toets_voetnoot_content or vak_voetnoten:
         remarks_p = document.add_paragraph("opmerking")
         remarks_p.runs[0].bold = True
         remarks_p.paragraph_format.space_before = Pt(10)
-
-    if weging_text:
-        p_weging = document.add_paragraph(weging_text)
-        p_weging.runs[0].font.size = Pt(10)
-        p_weging.paragraph_format.space_after = 0
 
     if toets_voetnoot_content:
         p_toets_voetnoten = document.add_paragraph()
