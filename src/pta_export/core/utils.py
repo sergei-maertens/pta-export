@@ -154,25 +154,6 @@ def parse_edx(edx: int) -> Tuple[int, int]:
     raise ValueError("Value must be positive")
 
 
-def get_simple_weging(vak: Vak) -> Optional[str]:
-    if not vak.toetsen:
-        return None
-
-    pct = vak.toetsen[0].pct
-    if not pct:
-        return None
-
-    if 1 <= pct <= 100:
-        return f"{pct}%"
-
-    if pct > 100:
-        choice_index = pct - 100  # 103 -> index 3 in choices
-        label = Breuken.labels[choice_index]  # format t/n
-        return label
-
-    raise ValueError("Value must be positive")
-
-
 def get_weging_text(year: int, leerjaar: int, vak: Vak) -> Optional[str]:
     if leerjaar in SIMPLE_WEGING:
         return None
