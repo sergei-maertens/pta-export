@@ -4,13 +4,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import FileResponse
 from django.views.generic import FormView
 
-from .constants import Leerjaren
+from .constants import LEERJAREN_SHORT
 from .export import export
 from .forms import ExportForm
 
 
 def get_export_response(jaar: int, leerjaar: int):
-    _leerjaar = dict(Leerjaren.choices)[leerjaar]
+    _leerjaar = LEERJAREN_SHORT[leerjaar]
 
     document = export(jaar, leerjaar)
 

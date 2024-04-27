@@ -17,6 +17,7 @@ from .models import Toets, Vak
 
 LEERJAAR_WEGING: dict[int, tuple[str, str]] = {
     Leerjaren.gym_ath_3.value: ("Weging", "weging_r4"),
+    Leerjaren.havo_3.value: ("Weging", "weging_r4"),
     Leerjaren.havo_4.value: ("Weging SE", "weging_ed4"),
     Leerjaren.vwo_4.value: ("Weging SE", "weging_ed4"),
     Leerjaren.havo_5.value: ("Weging SE", "weging_ed5"),
@@ -24,8 +25,12 @@ LEERJAAR_WEGING: dict[int, tuple[str, str]] = {
     Leerjaren.vwo_6.value: ("Weging SE", "weging_ed6"),
 }
 
-HIDE_DOMEIN = {Leerjaren.gym_ath_3}
+HIDE_DOMEIN = {
+    Leerjaren.gym_ath_3,
+    Leerjaren.havo_3,
+}
 
+PTB_LEERJAREN = HIDE_DOMEIN
 
 R4_LEERJAREN = (
     Leerjaren.vwo_4,
@@ -54,7 +59,16 @@ COLUMN_WIDTHS_PER_LEERJAAR = {
         4: Cm(2.75),
         5: Cm(1.5),
         6: Cm(2.0),
-    }
+    },
+    Leerjaren.havo_3.value: {
+        0: Cm(1.51),
+        1: Cm(10.43),
+        2: Cm(1.75),
+        3: Cm(1.5),
+        4: Cm(2.75),
+        5: Cm(1.5),
+        6: Cm(2.0),
+    },
 }
 
 
@@ -222,7 +236,7 @@ def add_header(document: Document, vak: Vak, year: int, leerjaar: int):
     if vak.afkorting and vak.weergeven == 1:
         vak_naam = f"{vak_naam} ({vak.afkorting})"
 
-    prefix = "PTB" if leerjaar == Leerjaren.gym_ath_3 else "PTA"
+    prefix = "PTB" if leerjaar in PTB_LEERJAREN else "PTA"
     header_run = header_p.add_run(f"{prefix}\t{vak_naam}\t{_leerjaar}\t{school_year}")
     # header_run.font.name = "Arial"
     header_run.font.size = Pt(14)
