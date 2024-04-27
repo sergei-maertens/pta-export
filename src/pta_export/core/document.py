@@ -1,6 +1,5 @@
 import html
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple
 
 from django.template.defaultfilters import date as format_date
 from django.utils.text import capfirst, normalize_newlines
@@ -13,16 +12,16 @@ from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls
 from docx.shared import Cm, Mm, Pt
 
-from .constants import ExportModes, Leerjaren
+from .constants import LEERJAREN_SHORT, ExportModes, Leerjaren
 from .models import Toets, Vak
 
-LEERJAAR_WEGING = {
-    Leerjaren.gym_ath_3: ("Weging", "weging_r4"),
-    Leerjaren.havo_4: ("Weging SE", "weging_ed4"),
-    Leerjaren.vwo_4: ("Weging SE", "weging_ed4"),
-    Leerjaren.havo_5: ("Weging SE", "weging_ed5"),
-    Leerjaren.vwo_5: ("Weging SE", "weging_ed5"),
-    Leerjaren.vwo_6: ("Weging SE", "weging_ed6"),
+LEERJAAR_WEGING: dict[int, tuple[str, str]] = {
+    Leerjaren.gym_ath_3.value: ("Weging", "weging_r4"),
+    Leerjaren.havo_4.value: ("Weging SE", "weging_ed4"),
+    Leerjaren.vwo_4.value: ("Weging SE", "weging_ed4"),
+    Leerjaren.havo_5.value: ("Weging SE", "weging_ed5"),
+    Leerjaren.vwo_5.value: ("Weging SE", "weging_ed5"),
+    Leerjaren.vwo_6.value: ("Weging SE", "weging_ed6"),
 }
 
 HIDE_DOMEIN = {Leerjaren.gym_ath_3}
@@ -47,7 +46,7 @@ COLUMN_WIDTHS = {
 }
 
 COLUMN_WIDTHS_PER_LEERJAAR = {
-    Leerjaren.gym_ath_3: {
+    Leerjaren.gym_ath_3.value: {
         0: Cm(1.51),
         1: Cm(10.43),
         2: Cm(1.75),
@@ -79,7 +78,6 @@ def initialize_document() -> Document:
 
 def add_vak(
     document: Document,
-    logo_path: str,
     vak: Vak,
     year: int,
     leerjaar: int,
@@ -88,17 +86,15 @@ def add_vak(
     match leerjaar:
         # Klas 6
         case Leerjaren.overstappers_vwo_5:
-            add_vak_overstappers_vwo5(document, logo_path, vak, year, leerjaar)
+            add_vak_overstappers_vwo5(document, vak, year, leerjaar)
         # Klas 7
         case Leerjaren.overstappers_vwo_6:
-            add_vak_overstappers_vwo6(document, logo_path, vak, year, leerjaar)
+            add_vak_overstappers_vwo6(document, vak, year, leerjaar)
         case Leerjaren.tl_3 | Leerjaren.tl_4:
             add_vak_tl(document, vak, year, leerjaar, toetsweek_periodes)
         # Default
         case _:
-            add_vak_regular(
-                document, logo_path, vak, year, leerjaar, toetsweek_periodes
-            )
+            add_vak_regular(document, vak, year, leerjaar, toetsweek_periodes)
 
 
 @dataclass
@@ -131,6 +127,8 @@ def get_periode_and_week(
 
     periode = toets.periode
     week = toets.week or ""
+    if not periode or not week:
+        return "", week
 
     if toets.week in toetsweken:
         periode = f"{periode} (tw)"
@@ -143,8 +141,8 @@ def get_toets_table(
     leerjaar: int,
     vak: Vak,
     toetsweek_periodes: dict[int, list[int]],
-    weging: Optional[Tuple[str, str]],
-) -> List[List[str]]:
+    weging: tuple[str, str] | None,
+) -> list[list[str]]:
     header = [
         "Code",
         "Onderwerp/Omschrijving",
@@ -210,7 +208,7 @@ def get_toets_table(
 
 
 def add_header(document: Document, vak: Vak, year: int, leerjaar: int):
-    _leerjaar = Leerjaren(leerjaar).label
+    _leerjaar = LEERJAREN_SHORT[leerjaar]
     school_year = f"{year}-{year + 1}"
 
     # set up the table header
@@ -230,14 +228,17 @@ def add_header(document: Document, vak: Vak, year: int, leerjaar: int):
     header_run.font.size = Pt(14)
     header_run.bold = True
 
+    # set the global/default paragraph styling
+    paragraph = document.add_paragraph()
+    _set_default_font(paragraph)
+
 
 def add_vak_regular(
     document: Document,
-    logo_path: str,
     vak: Vak,
     year: int,
     leerjaar: int,
-    toetsweek_periodes: dict[int, List[int]],
+    toetsweek_periodes: dict[int, list[int]],
 ):
     if not vak.toetsen:
         return
@@ -247,14 +248,6 @@ def add_vak_regular(
     weging = LEERJAAR_WEGING.get(leerjaar)
 
     add_header(document, vak, year, leerjaar)
-
-    # add the logo
-    paragraph = document.add_paragraph()
-    paragraph.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-    # paragraph.add_run().add_picture(logo_path, width=Cm(5.68))
-
-    # try to set global font name
-    _set_default_font(paragraph)
 
     Omschrijving.reset_counter()
     [header, *rows] = get_toets_table(leerjaar, vak, toetsweek_periodes, weging)
@@ -343,7 +336,7 @@ def add_vak_regular(
     document.add_page_break()
 
 
-def iter_oude_toets_columns(oude_toets: Optional[Toets]):
+def iter_oude_toets_columns(oude_toets: Toets | None):
     if oude_toets is None:
         yield "-"
         yield "-"
@@ -357,13 +350,7 @@ def iter_oude_toets_columns(oude_toets: Optional[Toets]):
     yield oude_toets.domein,
 
 
-def add_vak_overstappers_vwo5(
-    document: Document,
-    logo_path: str,
-    vak: Vak,
-    year: int,
-    leerjaar: int,
-):
+def add_vak_overstappers_vwo5(document: Document, vak: Vak, year: int, leerjaar: int):
     match vak.export_bit:
         case ExportModes.no_export.value:
             return
@@ -490,11 +477,7 @@ def add_vak_overstappers_vwo5(
 
 
 def add_vak_overstappers_vwo6(
-    document: Document,
-    logo_path: str,
-    vak: Vak,
-    year: int,
-    leerjaar: int,
+    document: Document, vak: Vak, year: int, leerjaar: int
 ) -> None:
     match vak.export_bit:
         case ExportModes.no_export.value:
@@ -606,9 +589,9 @@ def add_vak_tl(
     add_header(document, vak, year, leerjaar)
 
     type_map = {
-        3: "schriftelijk",
-        4: "praktisch",
-        5: "handelingsdeel",
+        3: "Schriftelijk",
+        4: "Praktisch",
+        5: "Handelingsdeel",
     }
 
     weging_map = {
@@ -620,11 +603,11 @@ def add_vak_tl(
         [
             toets.code,
             clean_text(toets.omschrijving),
-            toets.domein or "",
+            clean_text(toets.domein or ""),
             get_periode_and_week(toets, toetsweek_periodes)[0],
             toets.get_herkansbaar_display(),
             type_map.get(toets.type) or "",  # does not follow regular enum...
-            str(toets.tijd) or "",
+            str(toets.tijd or ""),
             str(weging_map[leerjaar](toets)) if leerjaar in weging_map else "",
         ]
         for toets in toetsen
@@ -642,13 +625,13 @@ def add_vak_tl(
     ]
     WIDTHS = {
         0: Cm(1.51),
-        1: Cm(10.43),
-        2: Cm(2.00),
-        3: Cm(1.50),
-        4: Cm(2.00),
-        5: Cm(3.00),
+        1: Cm(10.10),
+        2: Cm(3.00),
+        3: Cm(1.75),
+        4: Cm(2.75),
+        5: Cm(3.25),
         6: Cm(1.50),
-        7: Cm(2.50),
+        7: Cm(1.75),
     }
 
     create_table(document, header, table_data, index_no_center=1, widths=WIDTHS)
@@ -713,7 +696,7 @@ def _style_table_cells(table, index_no_center=1):
                     par.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
 
-def _set_table_header(table, header: List[str]) -> None:
+def _set_table_header(table, header: list[str]) -> None:
     header_cells = table.rows[0].cells
     for index, title in enumerate(header):
         cell = header_cells[index]

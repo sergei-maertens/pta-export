@@ -1,7 +1,6 @@
 import logging
 from typing import Iterable
 
-from django.contrib.staticfiles.storage import staticfiles_storage
 from django.db.models import Case, F, Prefetch, When
 from django.db.models.functions import Lower
 from django.utils import translation
@@ -95,11 +94,9 @@ def create_document(
     vakken: Iterable[Vak],
 ) -> Document:
     toetsweek_periodes = Kalender.objects.get(jaar=year).toetsweek_periodes
-    logo_path = staticfiles_storage.path("img/logopta.jpg")
-
     document = initialize_document()
 
     for vak in vakken:
-        add_vak(document, logo_path, vak, year, leerjaar, toetsweek_periodes)
+        add_vak(document, vak, year, leerjaar, toetsweek_periodes)
 
     return document
