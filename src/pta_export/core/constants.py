@@ -70,6 +70,36 @@ class Leerjaren(models.IntegerChoices):
         return [member for member in cls if 21 <= member.value <= 40]
 
 
+LEERJAREN_SHORT = {
+    Leerjaren.havo_4.value: "H4",
+    Leerjaren.havo_5.value: "H5",
+    Leerjaren.vwo_4.value: "V4",
+    Leerjaren.vwo_5.value: "V5",
+    Leerjaren.vwo_6.value: "V6",
+    Leerjaren.overstappers_vwo_5.value: "V5-H5",
+    Leerjaren.overstappers_vwo_6.value: "V6-H5",
+    Leerjaren.havo_vwo_1.value: "HA1",
+    Leerjaren.gym_ath_1.value: "AC1",
+    Leerjaren.havo_vwo_2.value: "HA2",
+    Leerjaren.gym_ath_2.value: "AC2",
+    Leerjaren.havo_3.value: "H3",
+    Leerjaren.gym_ath_3.value: "V3",
+    Leerjaren.lo_1.value: "LWOO1",
+    Leerjaren.bk_1.value: "BK1",
+    Leerjaren.tl_havo_1.value: "TH1",
+    Leerjaren.lo_2.value: "LWOO2",
+    Leerjaren.bk_2.value: "BK2",
+    Leerjaren.tl_havo_2.value: "TH2",
+    Leerjaren.lwt_3.value: "LWT3",
+    Leerjaren.basis_3.value: "B3",
+    Leerjaren.kader_3.value: "K3",
+    Leerjaren.tl_3.value: "TL3",
+    Leerjaren.basis_4.value: "B4",
+    Leerjaren.kader_4.value: "K4",
+    Leerjaren.tl_4.value: "TL4",
+}
+
+
 class Types(models.IntegerChoices):
     empty = 0, ""
     R = 1, "rapporttoets"

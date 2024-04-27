@@ -144,6 +144,10 @@ class Toets(models.Model):
     omschrijving = Latin1ButActuallyCP1252CharField(
         db_column="OCT_Omschrijving", max_length=200, blank=True, null=True
     )
+    herkansbaar = models.IntegerField(
+        db_column="OCT_Herkansbaar",
+        choices=((1, "Ja"), (2, "Nee")),
+    )
     domein = models.CharField(
         db_column="OCT_Domein", max_length=40, blank=True, null=True
     )
@@ -179,7 +183,7 @@ class Toets(models.Model):
         verbose_name_plural = "toetsen"
 
     def __str__(self):
-        return f"{self.jaar} - {self.klas} - {self.vak}"
+        return f"{self.jaar} - {self.klas} - {self.vak} (ID: {self.pk})"
 
 
 class User(models.Model):
