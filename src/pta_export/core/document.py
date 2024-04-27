@@ -407,7 +407,7 @@ def add_vak_overstappers_vwo5(document: Document, vak: Vak, year: int, leerjaar:
             "Jaar",
             "Omschrijving",
             "Domein",
-            "Overnemen/Herwaarderen",
+            "Actie",
             "Weging SE",
         ]
         table_data = [
