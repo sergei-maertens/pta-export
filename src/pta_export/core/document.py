@@ -12,7 +12,7 @@ from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls
 from docx.shared import Cm, Mm, Pt
 
-from .constants import LEERJAREN_SHORT, ExportModes, Leerjaren
+from .constants import ExportModes, Leerjaren
 from .models import Toets, Vak
 
 LEERJAAR_WEGING: dict[int, tuple[str, str]] = {
@@ -28,6 +28,14 @@ LEERJAAR_WEGING: dict[int, tuple[str, str]] = {
 HIDE_DOMEIN = {
     Leerjaren.gym_ath_3,
     Leerjaren.havo_3,
+}
+
+HIDE_WEEK = {
+    Leerjaren.havo_4,
+    Leerjaren.havo_5,
+    Leerjaren.vwo_4,
+    Leerjaren.vwo_5,
+    Leerjaren.vwo_6,
 }
 
 PTB_LEERJAREN = HIDE_DOMEIN
@@ -50,6 +58,15 @@ COLUMN_WIDTHS = {
     6: Cm(1.5),
 }
 
+COLUMN_WIDTHS_NO_LESWEEK = {
+    0: Cm(1.51),
+    1: Cm(10.43),
+    2: Cm(3.25),
+    3: Cm(1.75),
+    4: Cm(2.25),
+    5: Cm(1.5),
+}
+
 COLUMN_WIDTHS_PER_LEERJAAR = {
     Leerjaren.gym_ath_3.value: {
         0: Cm(1.51),
@@ -69,6 +86,7 @@ COLUMN_WIDTHS_PER_LEERJAAR = {
         5: Cm(1.5),
         6: Cm(2.0),
     },
+    **{lj.value: COLUMN_WIDTHS_NO_LESWEEK for lj in HIDE_WEEK},
 }
 
 
@@ -173,6 +191,9 @@ def get_toets_table(
     if leerjaar in R4_LEERJAREN:
         header.append("Weging R4")
 
+    if leerjaar in HIDE_WEEK:
+        header.remove("Week")
+
     if weging is not None:
         header.append(weging[0])
 
@@ -193,6 +214,9 @@ def get_toets_table(
         soort_werk = (
             toets.soortwerk.naam if toets.soortwerk and toets.soortwerk.id != 12 else ""
         )
+        domein_bits = [toets.domein or ""] if leerjaar not in HIDE_DOMEIN else []
+        week_bits = [week] if leerjaar not in HIDE_WEEK else []
+
         row = [
             toets.code,
             Omschrijving(
@@ -200,14 +224,12 @@ def get_toets_table(
                 inleverdatum=inleverdatum,
                 voetnoot=toets.voetnoot,
             ),
+            *domein_bits,
             periode or "",
-            week,
+            *week_bits,
             soort_werk,
             toets.tijd or "",
         ]
-
-        if leerjaar not in HIDE_DOMEIN:
-            row.insert(2, toets.domein or "")
 
         if leerjaar in R4_LEERJAREN:
             row.append(toets.weging_r4 or "")
