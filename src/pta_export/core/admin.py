@@ -24,7 +24,7 @@ class OverstapAdmin(admin.ModelAdmin):
     )
     list_filter = ("jaar", "vak", "klas")
     list_select_related = ("vak", "oude_toets")
-    raw_id_fields = ("oude_toets",)
+    raw_id_fields = ("oude_toets", "vak", "user", "h5_toets")
 
 
 @admin.register(Toets)
