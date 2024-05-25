@@ -546,9 +546,7 @@ def add_vak_overstappers_vwo6(
     if not vak.h5_toetsen:
         return
 
-    overstappen = {
-        overstap.oude_toets_id: overstap for overstap in vak.overstappen_vwo6
-    }
+    overstappen = {overstap.h5_toets_id: overstap for overstap in vak.overstappen_vwo6}
 
     add_header(document, vak, year, leerjaar)
 
@@ -570,10 +568,10 @@ def add_vak_overstappers_vwo6(
         overstap = overstappen.get(toets.id)
         if not overstap:
             return ""
-        if not overstap.h5_toets:
+        if not overstap.oude_toets:
             return ""
-        prefix = PREFIX_MAPPING[overstap.h5_toets.klas]
-        return f"{prefix} {overstap.h5_toets.code}"
+        prefix = PREFIX_MAPPING[overstap.oude_toets.klas]
+        return f"{prefix} {overstap.oude_toets.code}"
 
     def _get_actie(toets):
         overstap = overstappen.get(toets.id)
