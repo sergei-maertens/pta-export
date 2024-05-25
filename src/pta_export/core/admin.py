@@ -23,7 +23,13 @@ class OverstapAdmin(admin.ModelAdmin):
         "actie",
     )
     list_filter = ("jaar", "vak", "klas")
-    list_select_related = ("vak", "oude_toets")
+    list_select_related = (
+        "vak",
+        "oude_toets",
+        "oude_toets__vak",
+        "h5_toets",
+        "h5_toets__vak",
+    )
     raw_id_fields = ("oude_toets", "vak", "user", "h5_toets")
 
 
