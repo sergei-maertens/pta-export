@@ -222,7 +222,7 @@ def get_toets_table(
 
 
 def add_header(document: Document, vak: Vak, year: int, leerjaar: int):
-    _leerjaar = LEERJAREN_SHORT[leerjaar]
+    _leerjaar = Leerjaren(leerjaar).label
     school_year = f"{year}-{year + 1}"
 
     # set up the table header
