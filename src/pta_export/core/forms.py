@@ -1,4 +1,5 @@
 from django import forms
+from django.utils import timezone
 
 from .constants import Leerjaren
 from .models import Kalender, User as PtaUser
@@ -9,6 +10,7 @@ class ExportForm(forms.Form):
     jaar = forms.IntegerField(
         label="Jaar",
         help_text="Jaar in de kalender om te exporteren",
+        initial=lambda: timezone.now().year,
     )
     klas = forms.TypedChoiceField(
         label="klas",
