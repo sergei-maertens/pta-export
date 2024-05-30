@@ -12,7 +12,7 @@ from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls
 from docx.shared import Cm, Mm, Pt
 
-from .constants import ExportModes, Leerjaren
+from .constants import ExportModes, Leerjaren, Types
 from .models import Toets, Vak
 
 LEERJAAR_WEGING: dict[int, tuple[str, str]] = {
@@ -627,6 +627,13 @@ def add_vak_tl(
         4: "Praktisch",
         5: "Handelingsdeel",
     }
+    herkansbaar = {
+        Types.T: "Ja",
+        Types.H: "Ja",
+        Types.R: "Nee",
+        Types.V: "Nee",
+        Types.P: "Nee",
+    }
 
     weging_map = {
         Leerjaren.tl_3: lambda t: t.weging_ed3,
@@ -639,7 +646,9 @@ def add_vak_tl(
             clean_text(toets.omschrijving),
             clean_text(toets.domein or ""),
             get_periode_and_week(toets, toetsweek_periodes)[0],
-            toets.get_herkansbaar_display(),
+            herkansbaar.get(
+                toets.type, ""
+            ),  # apparently the DB column cannot be trusted?
             type_map.get(toets.type) or "",  # does not follow regular enum...
             str(toets.tijd or ""),
             str(weging_map[leerjaar](toets)) if leerjaar in weging_map else "",
