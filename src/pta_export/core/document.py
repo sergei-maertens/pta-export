@@ -347,7 +347,11 @@ def add_vak_regular(
 
     # REMARKS, below the table
     toets_voetnoot_content = [x for x in toets_content if x.voetnoot]
-    vak_voetnoten = [voetnoot.noot for voetnoot in vak.voetnoten]
+    vak_voetnoten = [
+        voetnoot.noot
+        for voetnoot in vak.voetnoten
+        if voetnoot.is_included_for(leerjaar)
+    ]
 
     if toets_voetnoot_content or vak_voetnoten:
         remarks_p = document.add_paragraph("opmerking")

@@ -264,6 +264,9 @@ class Voetnoot(models.Model):
     noot = models.CharField(
         db_column="OCVN_Noot", max_length=800, blank=True, null=True
     )
+    leerjaren = models.CharField(
+        db_column="OCVN_Leerjaren", max_length=40, blank=True, null=True
+    )
 
     class Meta:
         managed = False
@@ -272,6 +275,12 @@ class Voetnoot(models.Model):
 
     def __str__(self):
         return self.noot
+
+    def is_included_for(self, klas: Leerjaren | int) -> bool:
+        if self.leerjaren is None:
+            return False
+        magic_bit = self.leerjaren[klas]
+        return magic_bit == "1"
 
 
 class Werk(models.Model):
