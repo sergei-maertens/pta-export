@@ -367,7 +367,7 @@ def add_vak_regular(
         voetnoten_p.paragraph_format.space_after = 0
         for voetnoot in vak_voetnoten:
             _voetnoot = normalize_newlines(voetnoot)
-            voetnoten_p.add_run(f"{_voetnoot}\n")
+            voetnoten_p.add_run(_voetnoot)
 
     document.add_page_break()
 
