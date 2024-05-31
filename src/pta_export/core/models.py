@@ -250,9 +250,8 @@ class Vak(models.Model):
     def __str__(self):
         return self.naam
 
-    @property
-    def export_bit(self) -> str:
-        magic_bit = self.leerjaren[6]
+    def export_bit_for(self, klas: int) -> str:
+        magic_bit = self.leerjaren[klas]
         return magic_bit
 
 

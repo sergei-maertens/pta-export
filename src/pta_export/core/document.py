@@ -391,7 +391,7 @@ def iter_oude_toets_columns(oude_toets: Toets | None):
 
 
 def add_vak_overstappers_vwo5(document: Document, vak: Vak, year: int, leerjaar: int):
-    match vak.export_bit:
+    match vak.export_bit_for(leerjaar):
         case ExportModes.no_export.value:
             return
         case ExportModes.table.value:
@@ -519,7 +519,7 @@ def add_vak_overstappers_vwo5(document: Document, vak: Vak, year: int, leerjaar:
 def add_vak_overstappers_vwo6(
     document: Document, vak: Vak, year: int, leerjaar: int
 ) -> None:
-    match vak.export_bit:
+    match vak.export_bit_for(leerjaar):
         case ExportModes.no_export.value:
             return
         case ExportModes.table.value:
