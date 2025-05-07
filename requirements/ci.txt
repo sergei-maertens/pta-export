@@ -3,7 +3,7 @@
 asgiref==3.8.1
     # via django
 bcrypt==4.1.2
-certifi==2024.2.2
+certifi==2025.4.26
     # via sentry-sdk
 django==4.1.13
     # via
@@ -27,11 +27,11 @@ python-ipware==2.0.2
     # via django-ipware
 redis==5.0.3
     # via django-redis
-sentry-sdk==1.43.0
+sentry-sdk==2.27.0
 sqlparse==0.5.0
     # via django
 typing-extensions==4.10.0
     # via python-docx
-urllib3==2.2.1
+urllib3==2.4.0
     # via sentry-sdk
 uwsgi==2.0.24
